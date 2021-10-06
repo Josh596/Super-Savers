@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Pally, Product
+from .models import Category, Pally, Price, Product, Unit
 
 # Register your models here.
 @admin.register(Category)
@@ -14,6 +14,7 @@ class ProductAdmin(admin.ModelAdmin):
                     'in_stock', 'created', 'updated']
     list_filter = ['in_stock', 'is_active']
     list_editable = ['price', 'in_stock']
+    readonly_fields = ('id',)
     prepopulated_fields = {'slug': ('title',)}
 
 @admin.register(Pally)
@@ -24,3 +25,5 @@ class PallyAdmin(admin.ModelAdmin):
     list_editable = ['price_per_slot']
     prepopulated_fields = {'slug': ('author','created_on')}
 
+admin.site.register(Unit)
+admin.site.register(Price)

@@ -3,6 +3,7 @@ from django.db import models
 from django.urls import reverse
 
 
+
 class ProductManager(models.Manager):
     def get_queryset(self):
         return super(ProductManager, self).get_queryset().filter(is_active=True)
@@ -35,11 +36,14 @@ class Price(models.Model):
     price = models.DecimalField(max_digits=5, decimal_places=2)
 
     def __str__(self) -> str:
-        return f'per {self.unit}'
+        return f'{self.price} per {self.unit.title}'
+
+    class Meta:
+        pass
 
 class Product(models.Model):
     category = models.ForeignKey(Category, related_name='product', on_delete=models.CASCADE)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='product_creator')
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='product_creator', null=True, blank=True)
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255, default='admin')
     description = models.TextField(blank=True)
