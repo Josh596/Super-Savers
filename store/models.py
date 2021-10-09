@@ -76,7 +76,7 @@ class Product(models.Model):
         return self.title
 
 class Pally(models.Model):
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pally_creator')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pally_creator', null=True)
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     price_per_slot = models.OneToOneField(Price, on_delete=models.CASCADE, related_name='related_pally')
     max_num_slot = models.IntegerField()
@@ -91,7 +91,7 @@ class Pally(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.product.slug)
-        self.price = self.product.price.price/self.max_num_slot
+        self.price_per_slot = self.product.price.price/self.max_num_slot
         super(Pally, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
