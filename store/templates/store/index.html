@@ -1,123 +1,358 @@
-{% extends 'store/base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block css %}
+<style>
+
+
+    [type="number"]::-webkit-inner-spin-button,
+    [type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        height: auto;
+    }
+
+    .stepper {
+        border: 1px solid #eee;
+        display: inline-block;
+        overflow: visible;
+        height: 2.1em;
+        background: #fff;
+        padding: 1px;
+    }
+
+    .stepper input {
+        width: 3em;
+        height: 100%;
+        text-align: center;
+        border: 0;
+        background: transparent;
+        color: #000;
+    }
+
+    .stepper button {
+        width: 1.4em;
+        font-weight: 300;
+        height: 100%;
+        line-height: 0.1em;
+        font-size: 1.4em;
+        padding: 0.2em !important;
+        background: #eee;
+        color: #333;
+        border: none;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-    <div class="container">
-        <!-- Top Carousel -->
-        <div> <!--Should have box-shadow and rounded corners-->
-            <div id="carouselIndicators" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+<div class="container">
+    <!-- Top Carousel -->
+    <div>
+        <!--Should have box-shadow and rounded corners-->
+        <div id="carouselIndicators" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to="2"
+                    aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner"
+                style="max-height: 300px; border-radius: 20px; box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.75);">
+                <div class="carousel-item active">
+                    <img src="{% static 'store/images/slider1.jpg' %}" class="d-block w-100 img-fluid" alt="...">
                 </div>
-                <div class="carousel-inner" style="max-height: 300px; border-radius: 20px; box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.75);">
-                    <div class="carousel-item active">
-                        <img src="{% static 'store/images/slider1.jpg' %}" class="d-block w-100 img-fluid" alt="...">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="{% static 'store/images/slider2.jpg' %}" class="d-block w-100 img-fluid" alt="...">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="{% static 'store/images/slider3.jpg' %}" class="d-block w-100 img-fluid" alt="...">
-                    </div>
+                <div class="carousel-item">
+                    <img src="{% static 'store/images/slider2.jpg' %}" class="d-block w-100 img-fluid" alt="...">
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselIndicators" data-bs-slide="prev">
+                <div class="carousel-item">
+                    <img src="{% static 'store/images/slider3.jpg' %}" class="d-block w-100 img-fluid" alt="...">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselIndicators"
+                data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselIndicators" data-bs-slide="next">
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselIndicators"
+                data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
-                </button>
-            </div>
+            </button>
         </div>
-        <!-- Carousel Ends -->
+    </div>
+    <!-- Carousel Ends -->
 
-        <!-- Store Content -->
-        
-        <div class="m-3 mt-5">
-            <!-- Tab Controls -->
-            <div class="nav flex-row nav-pills w-100 justify-content-between" style="border-bottom: 1px solid rgba(0,0,0,.15);" id="v-pills-tab" role="tablist" aria-orientation="horizontal">
-                <div class="nav flex-row">
-                    <button class="nav-link active" id="v-pills-product-tab" data-bs-toggle="pill" data-bs-target="#v-pills-product" type="button" role="tab" aria-controls="v-pills-product" aria-selected="true">Shop</button>
-                    <button class="nav-link" id="v-pills-pally-tab" data-bs-toggle="pill" data-bs-target="#v-pills-pally" type="button" role="tab" aria-controls="v-pills-pally" aria-selected="false">Pally</button>
-                </div>
-                <!-- Product Filters-->
-                <ul class="nav nav-tabs justify-content-end">
-                    <li class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Categories</a>
-                      <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Category 1</a></li>
-                        <li><a class="dropdown-item" href="#">Category 2</a></li>
-                        <li><a class="dropdown-item" href="#">Category 3</a></li>
-                      </ul>
-                    </li>
+    <!-- Store Content -->
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Sort By</a>
-                        <ul class="dropdown-menu">
-                          <li><a class="dropdown-item" href="#">Default</a></li>
-                          <li><a class="dropdown-item" href="#">Price (Low to High)</a></li>
-                          <li><a class="dropdown-item" href="#">Price (High to Low)</a></li>
-                        </ul>
-                      </li>
-                </ul>
+    <div class="m-3 mt-5">
+        <!-- Tab Controls -->
+        <div class="nav flex-row nav-pills w-100 justify-content-between"
+            style="border-bottom: 1px solid rgba(0,0,0,.15);" id="v-pills-tab" role="tablist"
+            aria-orientation="horizontal">
+            <div class="nav flex-row">
+                <button class="nav-link active" id="v-pills-product-tab" data-bs-toggle="pill"
+                    data-bs-target="#v-pills-product" type="button" role="tab" aria-controls="v-pills-product"
+                    aria-selected="true">Shop</button>
+                <button class="nav-link" id="v-pills-pally-tab" data-bs-toggle="pill" data-bs-target="#v-pills-pally"
+                    type="button" role="tab" aria-controls="v-pills-pally" aria-selected="false">Pally</button>
             </div>
             <!-- Product Filters-->
-
-            <!-- Tab Contents -->
-            <div class="tab-content mt-3" id="v-pills-tabContent">
-
-                <!-- Product Contents -->
-                
-                <div class="tab-pane fade show active" id="v-pills-product" role="tabpanel" aria-labelledby="v-pills-product-tab">
-                    <div class="d-flex">
-                        {% for product in products %}
-                        <div class="card w-25">
-                            <img src="..." class="card-img-top" alt="...">
-                            <div class="card-body">
-                              <h5 class="card-title">{{ product.title }}</h5>
-                              <p class="card-text">&#8358; {{ product.price }}</p>
-                              <a href="#" class="btn btn-primary">ORDER NOW</a>
-                            </div>
-                        </div>
-                        {% empty %}
-                        <span>No product available at the moment...</span>
+            <ul class="nav nav-tabs justify-content-end">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                        aria-expanded="false">Categories</a>
+                    <ul class="dropdown-menu">
+                        {% for category in categories %}
+                        <li><a class="dropdown-item" href="{{ category.get_absolute_url }}">{{category.name}}</a></li>
                         {% endfor %}
-                    </div>
-                </div>
-                
-                <!-- Product Content Ends -->
+                    </ul>
+                </li>
 
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                        aria-expanded="false">Sort By</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Default</a></li>
+                        <li><a class="dropdown-item" href="#">Price (Low to High)</a></li>
+                        <li><a class="dropdown-item" href="#">Price (High to Low)</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!-- Product Filters-->
 
+        <!-- Tab Contents -->
+        <div class="tab-content mt-3" id="v-pills-tabContent">
 
-                <div class="tab-pane fade" id="v-pills-pally" role="tabpanel" aria-labelledby="v-pills-pally-tab">
-                    <div class="d-flex">
-                        {% for pally in pallies %}
-                        <div class="card w-25">
-                            <img src="..." class="card-img-top" alt="...">
-                            <div class="card-body">
-                              <h5 class="card-title">{{ pally.title }}</h5>
-                              <p class="card-text">&#8358; {{pally.price}}</p>
-                              <a href="#" class="btn btn-primary">BUY SLOT</a>
-                            </div>
+            <!-- Product Contents -->
+
+            <div class="tab-pane fade show active" id="v-pills-product" role="tabpanel"
+                aria-labelledby="v-pills-product-tab">
+                <div class="d-flex">
+                    {% for product in products %}
+                    <div class="card w-25">
+                        <img src="{{product.image.url}}" class="card-img-top" alt="{{product.title}}">
+                        <div class="card-body">
+                            <h5 class="card-title"><a class="nav-link" href="{{ product.get_absolute_url }}">{{product.title }}</a></h5>
+                            <p class="card-text">&#8358; {{ product.price }}</p>
+                            <a href="#" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#orderModal" data-product={{product.id}}>ORDER NOW</a>
                         </div>
-                        {% empty %}
-                        <span> No pally available at this moment...</span>
-                        {% endfor %}
                     </div>
+                    {% empty %}
+                    <span>No product available at the moment...</span>
+                    {% endfor %}
                 </div>
             </div>
 
+            <!-- Product Content Ends -->
+
+
+
+            <div class="tab-pane fade" id="v-pills-pally" role="tabpanel" aria-labelledby="v-pills-pally-tab">
+                <div class="d-flex">
+                    {% for pally in pallies %}
+                    <div class="card w-25">
+                        <img src="{{pally.product.image.url}}" class="card-img-top" alt="{{pally.product.title}}">
+                        <div class="card-body">
+                            <h5 class="card-title"><a class="nav-link" href="{{ pally.get_absolute_url }}">{{pally.product.title }}</a></h5>
+                            </h5>
+                            <p class="card-text">&#8358; {{pally.price_per_slot.price}} per slot</p>
+                            <a href="#" class="btn btn-primary" data-product="{{pally.product.id}}">BUY SLOT</a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <span> No pally available at this moment...</span>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
-        
-        
-        
-        <!-- Store Content Ends -->
+
     </div>
 
-    <!-- All modals -->
 
-    <!-- Modals End -->
+
+    <!-- Store Content Ends -->
+</div>
+
+<!-- All modals -->
+<!-- Modal -->
+<div class="modal fade " id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Buttons for Pay by myself and Pally -->
+                <form>
+                    <ul class="nav nav-pills ms-3 mb-3 " id="pills-tab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <input id="pills-myself-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-paymyself" type="radio" role="tab" aria-controls="pills-home"
+                                aria-selected="true" value="Pay by Myself" name="order-type" checked>
+                            <label for="pills-myself-tab">Pay by myself</label>
+                        </li>
+                        <li class="nav-item ms-3" role="presentation">
+                            <input  id="pills-pally-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-pally" type="radio" role="tab" aria-controls="pills-profile"
+                                aria-selected="false" value="Pally(Split bill)" name="order-type">
+                            <label for="pills-pally-tab">Pally(Split bill)</label>
+                        </li>
+                    </ul>
+                </form>
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-paymyself" role="tabpanel">
+                        <form id="order-product-form" method="POST">
+                            {% csrf_token %}
+                            <div class="pally-box form-group m-4" style="display: block;">
+                                <label style=" font-size: 14px;color: #4F4F4F; display: block;">Quantity</label>
+                                <input type="hidden" id="active-product-id">
+                                <div class="stepper mt-3">
+                                    <button>–</button>
+                                    <input type="number" id="order-quantity" value="1" min="0" max="100" step="2" readonly>
+                                    <button>+</button>
+                                </div>
+                            </div>
+                            <button type="reset" id="reset-product-qty"></button>
+                        </form>
+                    </div>
+
+                    <div class="tab-pane fade" id="pills-pally" role="tabpanel">
+                        <form method="POST" id="order-pally-form">
+                            {% csrf_token %}
+                            <div class="pally-box form-group m-4">
+                                <label style=" font-size: 14px;color: #4F4F4F;">Maximum of 20 people to pally with</label>
+                                <input type="hidden" id="active-pally-id">
+                                <input type="number" class="form-control"
+                                    style=" width: 20%;border-radius: 5px;border: 2px solid #AAAAAA;height: 44px;color: #333333;"
+                                    value="20" name="number_of_person" id="number_of_person" placeholder="1">
+                                <span class="pally_max_size" style="color:#f00;"></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="display: block;">
+                <button type="button" class="btn btn-secondary" style="display: block; width: 100%;" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="addtocart-button" style="display: block; width: 100%;">Order</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modals End -->
+<script>
+    window.onload = () => {
+        var active_product_id  //Either pally form or single pay form
+
+
+        var inc = document.getElementsByClassName("stepper");
+        for (i = 0; i < inc.length; i++) {
+            var incI = inc[i].querySelector("input"),
+                id = incI.getAttribute("id"),
+                min = incI.getAttribute("min"),
+                max = incI.getAttribute("max"),
+                step = incI.getAttribute("step");
+            document
+                .getElementById(id)
+                .previousElementSibling.setAttribute(
+                    "onclick",
+                    "stepperInput('" + id + "', -" + step + ", " + min + ")"
+                );
+            document
+                .getElementById(id)
+                .nextElementSibling.setAttribute(
+                    "onclick",
+                    "stepperInput('" + id + "', " + step + ", " + max + ")"
+                );
+        }
+
+        function stepperInput(id, s, m) {
+            var el = document.getElementById(id);
+            if (s > 0) {
+                if (parseInt(el.value) < m) {
+                    el.value = parseInt(el.value) + s;
+                }
+            } else {
+                if (parseInt(el.value) > m) {
+                    el.value = parseInt(el.value) + s;
+                }
+            }
+        }
+    $(document).on('click', '#addtocart-button', function (e) {
+      e.preventDefault();
+
+      if(is_pay_by_myself){
+          product_id = active_product_id
+          $.ajax({
+            type: 'POST',
+            url: '{% url "basket:basket_add" %}',
+            data: {
+                productid: $('#active-product-id').val(),
+                productqty: $('#order-quantity').val(),
+                csrfmiddlewaretoken: "{{csrf_token}}",
+                action: 'post'
+            },
+            success: function (json) {
+                document.getElementById("basket-qty").innerHTML = json.qty
+            },
+            error: function (xhr, errmsg, err) {}
+         });
+      }
+
+      else{
+        $.ajax({
+            type: 'POST',
+            url: '{% url "basket:basket_add_pally" %}',
+            data: {
+            productid: $('#active-product-id').val(),
+            no_of_person: $('#number_of_person').val(),
+            csrfmiddlewaretoken: "{{csrf_token}}",
+            action: 'post'
+            },
+            success: function (json) {
+            document.getElementById("basket-qty").innerHTML = json.qty
+            },
+            error: function (xhr, errmsg, err) {}
+        });
+       }
+    })
+
+    var orderModal = document.getElementById('orderModal')
+    orderModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        active_product_id = button.getAttribute('data-product')
+        document.getElementById('reset-product-qty').click();
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+
+    })
+
+
+    var productTab = document.getElementById('pills-myself-tab')
+    productTab.addEventListener('shown.bs.tab', function (event) {
+        active_order_form = document.getElementById('order-product-form');
+        is_pay_by_myself = true
+        // event.target // newly activated tab
+        // event.relatedTarget // previous active tab
+    })
+
+    var pallyTab = document.getElementById('pills-pally-tab')
+    pallyTab.addEventListener('shown.bs.tab', function (event) {
+        active_order_form = document.getElementById('order-pally-form')
+        is_pay_by_myself = false
+        console.log(active_order_form)
+        // event.target // newly activated tab
+        // event.relatedTarget // previous active tab
+    })
+    }
+</script>
+<script>
+
+  </script>
 {% endblock %}

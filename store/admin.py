@@ -23,7 +23,7 @@ class PallyAdmin(admin.ModelAdmin):
                     'max_num_slot', 'created_on']
     list_filter = ['is_active']
     list_editable = ['price_per_slot']
-    prepopulated_fields = {'slug': ('author','created_on')}
+    prepopulated_fields = {'slug': ('author','expiry_date')}
 
 admin.site.register(Unit)
 admin.site.register(Price)

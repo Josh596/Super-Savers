@@ -26,9 +26,10 @@ def category_list(request, category_slug=None):
 
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, in_stock=True)
-    return render(request, 'store/single.html', {'product': product})
+    return render(request, 'store/product_single.html', {'product': product})
 
-def pally_detail(request, slug):
+def pally_detail(request, id, slug):
     # Note to self -- Pally should be active if product is still in stock, else not active
-    pally = get_object_or_404(Pally, slug=slug)
+    pally = get_object_or_404(Pally, slug=slug, id=id)
+
     return render(request, 'store/pally_single.html', {'pally': pally})

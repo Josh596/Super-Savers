@@ -16,8 +16,13 @@ Including another URLconf
 from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
-from .views import *
+from . import views
 
+
+app_name = 'store'
 urlpatterns = [
-    path('', index)
+    path('', views.index, name='index'),
+    path('product/detail/<slug:slug>', views.product_detail, name='product_detail'),
+    path('pally/detail/<id>/<slug:slug>', views.pally_detail, name='pally_detail'),
+    path('category/<slug:category_slug>/', views.category_list, name='category_list'),
 ]
