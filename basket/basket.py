@@ -2,7 +2,9 @@ from decimal import Decimal
 
 from django.conf import settings
 
-from store.models import Product
+from store.models import Pally, Product
+
+
 
 
 class Basket():
@@ -17,6 +19,7 @@ class Basket():
         if settings.BASKET_SESSION_ID not in request.session:
             basket = self.session[settings.BASKET_SESSION_ID] = {}
         self.basket = basket
+
 
     def add(self, product, qty):
         """
@@ -95,6 +98,52 @@ class Basket():
 
     def save(self):
         self.session.modified = True
+
+class PallyBasket(Basket):
+
+    def __init__(self, request):
+        self.session = request.session
+        basket = self.session.get(settings.PALLY_BASKET_SESSION_ID)
+        if settings.PALLY_BASKET_SESSION_ID not in request.session:
+            basket = self.session[settings.PALLY_BASKET_SESSION_ID] = {}
+        self.basket = basket
+    
+    def add(self, pally, qty):
+        """
+        Adding and updating the users basket session data
+        """
+        pally_id = str(pally.id)
+        if pally_id in self.basket:
+            self.basket[pally_id]['qty'] = qty #Change no of slots purchased
+        else:
+            self.basket[pally_id] = {'price':str(pally.price_per_slot), 'qty':qty}
+
+        self.save()
+    
+    def __iter__(self):
+        pally_ids = self.basket.keys()
+        pallies = Pally.pallies.filter(id__in=pally_ids)
+        basket = self.basket.copy()
+
+        for pally in pallies:
+            basket[str(pally.id)]['pally'] = pally
+
+        for item in basket.values():
+            item['price'] = Decimal(item['price'])
+            item['total_price'] = item['price'] * item['qty']
+            yield item
+
+
+    def update(self, pally, qty):
+        pally_id = str(pally)
+        if pally_id in self.basket:
+            self.basket[pally_id]['qty'] = qty
+        self.save()
+
+
+
+
+
 
 
 """

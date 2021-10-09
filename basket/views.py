@@ -1,9 +1,9 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 
-from store.models import Product
+from store.models import Pally, Product
 
-from .basket import Basket
+from .basket import Basket, PallyBasket
 
 
 def basket_summary(request):
@@ -23,6 +23,27 @@ def basket_add(request):
         response = JsonResponse({'qty': basketqty})
         return response
 
+def create_pally(request):
+    basket = PallyBasket(request)
+    if request.POST.get('action') == 'post':
+        product_id = int(request.POST.get('productid'))
+        product_qty = int(request.POST.get('productqty'))
+        no_of_persons = int(request.POST.get('number_of_person'))
+        product = get_object_or_404(Product, id=product_id)
+        if request.user:
+            pally = Pally.objects.create(
+                author = request.user.id,
+                product = product.id,
+                price_per_slot = product.price.price/no_of_persons,
+                max_num_slot = no_of_persons,
+                is_active = False
+            )
+            pally.save()
+        basket.add(pally=pally, qty=product_qty)
+
+        basketqty = basket.__len__()
+        response = JsonResponse({'qty': basketqty})
+        return response
 
 def basket_delete(request):
     basket = Basket(request)
