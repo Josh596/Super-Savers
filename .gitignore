@@ -2,8 +2,10 @@ env/
 config/__pycache__/
 store/__pycache__/
 orders/__pycache__/
+basket/__pycache__/
 store/migrations/
 orders/migrations/
+basket/migrations/
 store/migrations/__pycache__/
 orders/migrations/__pycache__/
 
@@ -11,4 +13,7 @@ db.sqlite3
 
 
 
-store/__pycache__/
+
+
+
+
