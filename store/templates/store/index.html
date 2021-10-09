@@ -1,47 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block css %}
-<style>
 
-
-    [type="number"]::-webkit-inner-spin-button,
-    [type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        height: auto;
-    }
-
-    .stepper {
-        border: 1px solid #eee;
-        display: inline-block;
-        overflow: visible;
-        height: 2.1em;
-        background: #fff;
-        padding: 1px;
-    }
-
-    .stepper input {
-        width: 3em;
-        height: 100%;
-        text-align: center;
-        border: 0;
-        background: transparent;
-        color: #000;
-    }
-
-    .stepper button {
-        width: 1.4em;
-        font-weight: 300;
-        height: 100%;
-        line-height: 0.1em;
-        font-size: 1.4em;
-        padding: 0.2em !important;
-        background: #eee;
-        color: #333;
-        border: none;
-    }
-</style>
-{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -209,13 +169,11 @@
                             <div class="pally-box form-group m-4" style="display: block;">
                                 <label style=" font-size: 14px;color: #4F4F4F; display: block;">Quantity</label>
                                 <input type="hidden" id="active-product-id">
-                                <div class="stepper mt-3">
-                                    <button>–</button>
-                                    <input type="number" id="order-quantity" value="1" min="0" max="100" step="2" readonly>
-                                    <button>+</button>
+                                <div class="d-flex" style="width: 30%;">
+                                    <input type="number" id="order-quantity" value="1" name="order-quantity"  min="1" step="1">
                                 </div>
                             </div>
-                            <button type="reset" id="reset-product-qty"></button>
+                            <button hidden type="reset" id="reset-product-qty"></button>
                         </form>
                     </div>
 
@@ -227,7 +185,7 @@
                                 <input type="hidden" id="active-pally-id">
                                 <input type="number" class="form-control"
                                     style=" width: 20%;border-radius: 5px;border: 2px solid #AAAAAA;height: 44px;color: #333333;"
-                                    value="20" name="number_of_person" id="number_of_person" placeholder="1">
+                                    value="20" name="number_of_person" id="number_of_person">
                                 <span class="pally_max_size" style="color:#f00;"></span>
                             </div>
                         </form>
@@ -235,125 +193,123 @@
                 </div>
             </div>
             <div class="modal-footer" style="display: block;">
-                <button type="button" class="btn btn-secondary" style="display: block; width: 100%;" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" id="closeOrderModal" style="display: block; width: 100%;" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" id="addtocart-button" style="display: block; width: 100%;">Order</button>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Success Modal -->
+<!-- Modal HTML -->
+<div id="orderSuccessModal" class="modal fade">
+	<div class="modal-dialog modal-confirm">
+		<div class="modal-content">
+			<div class="modal-header justify-content-center">
+				<div class="icon-box">
+					<i class="material-icons">&#xE876;</i>
+				</div>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			</div>
+			<div class="modal-body text-center">
+				<h4>Great!</h4>	
+				<p>Item(s) has been added to your cart.</p>
+			</div>
+		</div>
+        <div class="modal-footer" style="display: block;">
+            <button type="button" class="btn btn-secondary" id="closeSuccessModal" style="display: block; width: 100%;" data-bs-dismiss="modal">Close</button>
+        </div>
+	</div>
+</div>
 <!-- Modals End -->
+{% endblock %}
+
+{% block script %}
 <script>
     window.onload = () => {
         var active_product_id  //Either pally form or single pay form
+        var pay_single = true;
+        $("input[type='number']").inputSpinner();
+        var orderModal = document.getElementById('orderModal');
+        orderModal.addEventListener('show.bs.modal', function (event) {
+            // Button that triggered the modal
+            var button = event.relatedTarget
+            // Extract info from data-bs-* attributes
+            active_product_id = button.getAttribute('data-product')
+            document.getElementById('reset-product-qty').click();
+            // If necessary, you could initiate an AJAX request here
+            // and then do the updating in a callback.
+            //
+            // Update the modal's content.
 
-
-        var inc = document.getElementsByClassName("stepper");
-        for (i = 0; i < inc.length; i++) {
-            var incI = inc[i].querySelector("input"),
-                id = incI.getAttribute("id"),
-                min = incI.getAttribute("min"),
-                max = incI.getAttribute("max"),
-                step = incI.getAttribute("step");
-            document
-                .getElementById(id)
-                .previousElementSibling.setAttribute(
-                    "onclick",
-                    "stepperInput('" + id + "', -" + step + ", " + min + ")"
-                );
-            document
-                .getElementById(id)
-                .nextElementSibling.setAttribute(
-                    "onclick",
-                    "stepperInput('" + id + "', " + step + ", " + max + ")"
-                );
+        })
+    
+        function paymentSuccess(){
+            $('#closeOrderModal').click()
+            $('#orderSuccessModal').modal('show');
         }
 
-        function stepperInput(id, s, m) {
-            var el = document.getElementById(id);
-            if (s > 0) {
-                if (parseInt(el.value) < m) {
-                    el.value = parseInt(el.value) + s;
-                }
-            } else {
-                if (parseInt(el.value) > m) {
-                    el.value = parseInt(el.value) + s;
-                }
+        $(document).on('click', '#addtocart-button', function (e) {
+        e.preventDefault();
+
+            if(pay_single){
+                product_id = active_product_id
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "basket:basket_add" %}',
+                    data: {
+                        productid: active_product_id,
+                        productqty: $('#order-quantity').val(),
+                        csrfmiddlewaretoken: "{{csrf_token}}",
+                        action: 'post'
+                    },
+                    success: function (json) {
+                        paymentSuccess()
+                        document.getElementById("basket-qty").innerHTML = json.qty
+                    },
+                    error: function (xhr, errmsg, err) {}
+                });
             }
-        }
-    $(document).on('click', '#addtocart-button', function (e) {
-      e.preventDefault();
 
-      if(is_pay_by_myself){
-          product_id = active_product_id
-          $.ajax({
-            type: 'POST',
-            url: '{% url "basket:basket_add" %}',
-            data: {
-                productid: $('#active-product-id').val(),
-                productqty: $('#order-quantity').val(),
-                csrfmiddlewaretoken: "{{csrf_token}}",
-                action: 'post'
-            },
-            success: function (json) {
-                document.getElementById("basket-qty").innerHTML = json.qty
-            },
-            error: function (xhr, errmsg, err) {}
-         });
-      }
+            else{
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "basket:basket_add_pally" %}',
+                    data: {
+                        productid: active_product_id,
+                        productqty: 1,
+                        no_of_person: $('#number_of_person').val(),
+                        csrfmiddlewaretoken: "{{csrf_token}}",
+                        action: 'post'
+                    },
+                    success: function (json) {
+                        paymentSuccess()
+                        document.getElementById("basket-qty").innerHTML = json.qty
+                    },
+                    error: function (xhr, errmsg, err) {}
+                });
+            }
+        })
 
-      else{
-        $.ajax({
-            type: 'POST',
-            url: '{% url "basket:basket_add_pally" %}',
-            data: {
-            productid: $('#active-product-id').val(),
-            productqty: 1,
-            no_of_person: $('#number_of_person').val(),
-            csrfmiddlewaretoken: "{{csrf_token}}",
-            action: 'post'
-            },
-            success: function (json) {
-            document.getElementById("basket-qty").innerHTML = json.qty
-            },
-            error: function (xhr, errmsg, err) {}
-        });
-       }
-    })
-
-    var orderModal = document.getElementById('orderModal')
-    orderModal.addEventListener('show.bs.modal', function (event) {
-        // Button that triggered the modal
-        var button = event.relatedTarget
-        // Extract info from data-bs-* attributes
-        active_product_id = button.getAttribute('data-product')
-        document.getElementById('reset-product-qty').click();
-        // If necessary, you could initiate an AJAX request here
-        // and then do the updating in a callback.
-        //
-        // Update the modal's content.
-
-    })
+    
 
 
-    var productTab = document.getElementById('pills-myself-tab')
-    productTab.addEventListener('shown.bs.tab', function (event) {
-        active_order_form = document.getElementById('order-product-form');
-        is_pay_by_myself = true
-        // event.target // newly activated tab
-        // event.relatedTarget // previous active tab
-    })
+        var productTab = document.getElementById('pills-myself-tab')
+        productTab.addEventListener('shown.bs.tab', function (event) {
+            active_order_form = document.getElementById('order-product-form');
+            pay_single = true
+            // event.target // newly activated tab
+            // event.relatedTarget // previous active tab
+        })
 
-    var pallyTab = document.getElementById('pills-pally-tab')
-    pallyTab.addEventListener('shown.bs.tab', function (event) {
-        active_order_form = document.getElementById('order-pally-form')
-        is_pay_by_myself = false
-        console.log(active_order_form)
-        // event.target // newly activated tab
-        // event.relatedTarget // previous active tab
-    })
+        var pallyTab = document.getElementById('pills-pally-tab')
+        pallyTab.addEventListener('shown.bs.tab', function (event) {
+            active_order_form = document.getElementById('order-pally-form')
+            pay_single = false
+            console.log(active_order_form)
+            // event.target // newly activated tab
+            // event.relatedTarget // previous active tab
+        })
     }
 </script>
-<script>
-
-  </script>
 {% endblock %}

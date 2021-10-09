@@ -8,7 +8,8 @@ from .basket import Basket, PallyBasket
 
 def basket_summary(request):
     basket = Basket(request)
-    return render(request, 'basket/summary.html', {'basket': basket})
+    pally_basket = PallyBasket(request)
+    return render(request, 'basket/cart.html', {'basket': basket, 'pally_basket':pally_basket})
 
 
 def basket_add(request):
@@ -28,12 +29,12 @@ def create_pally(request):
     if request.POST.get('action') == 'post':
         product_id = int(request.POST.get('productid'))
         product_qty = int(request.POST.get('productqty'))
-        no_of_persons = int(request.POST.get('number_of_person'))
+        no_of_persons = int(request.POST.get('no_of_person'))
         product = get_object_or_404(Product, id=product_id)
         if request.user:
             pally = Pally.objects.create(
-                author = request.user.id,
-                product = product.id,
+                author = request.user,
+                product = product,
                 price_per_slot = product.price.price/no_of_persons,
                 max_num_slot = no_of_persons,
                 is_active = False

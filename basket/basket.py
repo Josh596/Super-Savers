@@ -1,4 +1,3 @@
-from decimal import Decimal
 
 from django.conf import settings
 
@@ -19,6 +18,7 @@ class Basket():
         if settings.BASKET_SESSION_ID not in request.session:
             basket = self.session[settings.BASKET_SESSION_ID] = {}
         self.basket = basket
+        print(self.basket)
 
 
     def add(self, product, qty):
@@ -30,7 +30,7 @@ class Basket():
         if product_id in self.basket:
             self.basket[product_id]['qty'] = qty
         else:
-            self.basket[product_id] = {'price': str(product.price), 'qty': qty}
+            self.basket[product_id] = {'price': str(product.price.price), 'qty': qty}
 
         self.save()
 
@@ -47,7 +47,8 @@ class Basket():
             basket[str(product.id)]['product'] = product
 
         for item in basket.values():
-            item['price'] = Decimal(item['price'])
+            print(item['price'])
+            item['price'] = float(item['price'])
             item['total_price'] = item['price'] * item['qty']
             yield item
 
@@ -67,18 +68,18 @@ class Basket():
         self.save()
 
     def get_subtotal_price(self):
-        return sum(Decimal(item['price']) * item['qty'] for item in self.basket.values())
+        return sum(float(item['price']) * item['qty'] for item in self.basket.values())
 
     def get_total_price(self):
 
-        subtotal = sum(Decimal(item['price']) * item['qty'] for item in self.basket.values())
+        subtotal = sum(float(item['price']) * item['qty'] for item in self.basket.values())
 
         if subtotal == 0:
-            shipping = Decimal(0.00)
+            shipping = float(0.00)
         else:
-            shipping = Decimal(11.50)
+            shipping = float(100)
 
-        total = subtotal + Decimal(shipping)
+        total = subtotal + float(shipping)
         return total
 
     def delete(self, product):
@@ -93,7 +94,7 @@ class Basket():
 
     def clear(self):
         # Remove basket from session
-        del self.session[settings.BASKET_SESSION_ID]
+        self.session.pop(settings.BASKET_SESSION_ID, None)
         self.save()
 
     def save(self):
@@ -129,7 +130,7 @@ class PallyBasket(Basket):
             basket[str(pally.id)]['pally'] = pally
 
         for item in basket.values():
-            item['price'] = Decimal(item['price'])
+            item['price'] = float(item['price'])
             item['total_price'] = item['price'] * item['qty']
             yield item
 

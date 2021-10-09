@@ -58,6 +58,7 @@ class Product(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     products = ProductManager()
+    objects = models.Manager()
 
     class Meta:
         verbose_name_plural = 'Products'
@@ -86,6 +87,7 @@ class Pally(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     expiry_date = models.DateTimeField()
     pallies = PallyManager()
+    objects = models.Manager()
 
 
     def save(self, *args, **kwargs):

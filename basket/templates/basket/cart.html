@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<!-- Shopping cart table -->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col">
+            <!-- Product Table -->
+            {% if basket|length != 0 %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="border-0 bg-light">
+                                <div class="p-2 px-3 text-uppercase">Product</div>
+                            </th>
+                            <th scope="col" class="border-0 bg-light">
+                                <div class="py-2 text-uppercase">Price</div>
+                            </th>
+                            <th scope="col" class="border-0 bg-light">
+                                <div class="py-2 text-uppercase">Quantity</div>
+                            </th>
+                            <th scope="col" class="border-0 bg-light">
+                                <div class="py-2 text-uppercase">Remove</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in basket %}
+                        {% with product=item.product %}
+                        <tr class="single-orders" data-index={{product.id}}>
+                            <th scope="row" class="border-0">
+                                <div class="p-2">
+                                    <img src="{{product.image.url}}" alt="" width="70"
+                                        class="img-fluid rounded shadow-sm">
+                                    <div class="ml-3 d-inline-block align-middle">
+                                        <h5 class="mb-0"> <a href="#" class="text-dark d-inline-block align-middle">{{product.title}}</a></h5>
+                                    </div>
+                                </div>
+                            </th>
+                            <td class="border-0 align-middle"><strong>{{product.price.price}}</strong></td>
+                            <td class="border-0 align-middle"><input type="number" class="order-qty" data-product={{product.id}} value="{{item.qty}}"></td>
+                            <td class="border-0 align-middle"><button class="btn text-dark single-order-del"  data-product={{product.id}}><i class="fa fa-trash" data-product={{product.id}}></i></button></td>
+                        </tr>
+                        {% endwith %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+
+            <!-- Pally Table -->
+            {% if pally_basket|length != 0 %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="border-0 bg-light">
+                                <div class="p-2 px-3 text-uppercase">Pally</div>
+                            </th>
+                            <th scope="col" class="border-0 bg-light">
+                                <div class="py-2 text-uppercase">Price per slot</div>
+                            </th>
+                            <th scope="col" class="border-0 bg-light">
+                                <div class="py-2 text-uppercase">Number of slots</div>
+                            </th>
+                            <th scope="col" class="border-0 bg-light">
+                                <div class="py-2 text-uppercase">Remove</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in pally_basket %}
+                        {% with pally=item.pally %}
+                        <tr>
+                            <th scope="row" class="border-0">
+                                <div class="p-2">
+                                    <img src="{{pally.product.image.url}}" alt="" width="70"
+                                        class="img-fluid rounded shadow-sm">
+                                    <div class="ml-3 d-inline-block align-middle">
+                                        <h5 class="mb-0"> <a href="#" class="text-dark d-inline-block align-middle">{{pally.product.title}}</a></h5>
+                                    </div>
+                                </div>
+                            </th>
+                            <td class="border-0 align-middle"><strong>{{pally.price_per_slot.price}}</strong></td>
+                            <td class="border-0 align-middle"><input type="number" class="order-qty" data-product={{pally.id}} value="{{item.qty}}"></td>
+                            <td class="border-0 align-middle"><a href="#" class="text-dark"><i class="fa fa-trash"></i></a></td>
+                        </tr>
+                        {% endwith %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            <!-- Table End -->
+        </div>
+        <!-- Payment Row and Price Summary -->
+        <div class="col">
+            <div class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold">Order summary </div>
+            <div class="p-4">
+                <ul class="list-unstyled mb-4">
+                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Order Subtotal </strong><strong>{{basket.get_subtotal_price|add:pally_basket.get_subtotal_price}}</strong></li>
+                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Shipping and handling</strong><strong>{{200}}</strong></li>
+                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Tax</strong><strong>$0.00</strong></li>
+                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Total</strong>
+                    <h5 class="font-weight-bold">{{basket.get_total_price|add:pally_basket.get_total_price}}</h5>
+                </li>
+                </ul><a href="#" class="btn btn-dark rounded-pill py-2 btn-block">Procceed to checkout</a>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script>
+    $("input[type='number']").inputSpinner();
+    qtyinputs = document.getElementsByClassName("order-qty");
+    for (var i = 0; i < qtyinputs.length; i++) {
+        qtyinputs[i].addEventListener("change", function (e) {
+            let input = e.target
+            let prod_id = input.getAttribute('data-product')
+			let prodqty = this.value
+            $.ajax({
+                type: "POST",
+                url: '{% url "basket:basket_update" %}',
+                data: {
+                    productid: prod_id,
+                    productqty: prodqty,
+                    csrfmiddlewaretoken: "{{csrf_token}}",
+                    action: "post",
+                },
+                success: function (json) {
+        
+                    total = (parseFloat(json.subtotal) + 11.50).toFixed(2);
+                    document.getElementById("basket-qty").innerHTML = json.qty;
+                    document.getElementById("subtotal").innerHTML = json.subtotal;
+                    document.getElementById("total").innerHTML = total;
+                },
+                error: function (xhr, errmsg, err) {},
+            });
+        });
+    }
+
+    order_remove_button = document.getElementsByClassName('single-order-del');
+    for (var i = 0; i < order_remove_button.length; i++) {
+        order_remove_button[i].addEventListener("click", function (e) {
+            let btn = e.target
+            console.log(btn)
+            let prod_id = btn.getAttribute('data-product')
+            console.log(prod_id)
+            $.ajax({
+                type: "POST",
+                url: '{% url "basket:basket_delete" %}',
+                data: {
+                    productid: parseInt(prod_id),
+                    csrfmiddlewaretoken: "{{csrf_token}}",
+                    action: "post",
+                },
+                success: function (json) {
+        
+                    total = (parseFloat(json.subtotal) + 11.50).toFixed(2);
+                    $('.single-orders').filter(`[data-index=${prod_id}]`).remove();
+                    document.getElementById("basket-qty").innerHTML = json.qty;
+                    document.getElementById("subtotal").innerHTML = json.subtotal;
+                    document.getElementById("total").innerHTML = total;
+                },
+                error: function (xhr, errmsg, err) {},
+            });
+        });
+    }
+    // Delete Item
+    $(document).on("click", ".delete-button", function (e) {
+      e.preventDefault();
+      var prodid = $(this).data("index");
+      $.ajax({
+        type: "POST",
+        url: '{% url "basket:basket_delete" %}',
+        data: {
+          productid: $(this).data("index"),
+          csrfmiddlewaretoken: "{{csrf_token}}",
+          action: "post",
+        },
+        success: function (json) {
+          $('.product-item[data-index="' + prodid + '"]').remove();
+  
+          if (json.qty == 0) {
+            total = 0
+            subtotal = 0
+          } else {
+            total = (parseFloat(json.subtotal) + 11.50).toFixed(2);
+            subtotal = json.subtotal
+          }
+  
+          document.getElementById("subtotal").innerHTML = subtotal;
+          document.getElementById("basket-qty").innerHTML = json.qty;
+          document.getElementById("total").innerHTML = total;
+        },
+        error: function (xhr, errmsg, err) {},
+      });
+    });
+  
+    // // Update Item
+    // $(document).on("click", ".update-button", function (e) {
+    //   e.preventDefault();
+    //   var prodid = $(this).data("index");
+    //   $.ajax({
+    //     type: "POST",
+    //     url: '{% url "basket:basket_update" %}',
+    //     data: {
+    //       productid: $(this).data("index"),
+    //       productqty: $("#select" + prodid + " option:selected").text(),
+    //       csrfmiddlewaretoken: "{{csrf_token}}",
+    //       action: "post",
+    //     },
+    //     success: function (json) {
+  
+    //       total = (parseFloat(json.subtotal) + 11.50).toFixed(2);
+    //       document.getElementById("basket-qty").innerHTML = json.qty;
+    //       document.getElementById("subtotal").innerHTML = json.subtotal;
+    //       document.getElementById("total").innerHTML = total;
+    //     },
+    //     error: function (xhr, errmsg, err) {},
+    //   });
+    // });
+  </script>
+
+{% endblock %}
