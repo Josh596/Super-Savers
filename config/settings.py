@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'store.apps.StoreConfig',
     'orders.apps.OrdersConfig',
-    'basket.apps.BasketConfig'
+    'basket.apps.BasketConfig',
+    'account.apps.AccountConfig'
 ]
 
 MIDDLEWARE = [
@@ -138,3 +139,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Basket session ID
 BASKET_SESSION_ID = "basket"
 PALLY_BASKET_SESSION_ID = 'pally_basket'
+
+# Custom user model
+AUTH_USER_MODEL = "account.UserBase" 
+LOGIN_REDIRECT_URL = "/account/dashboard"
+LOGIN_URL = "/account/login/"
+
+# Email setting
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

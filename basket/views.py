@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
 
-from store.models import Pally, Product
+from store.models import Pally, Product, Price
 
 from .basket import Basket, PallyBasket
 
@@ -30,7 +30,10 @@ def create_pally(request):
         product_id = int(request.POST.get('productid'))
         product_qty = int(request.POST.get('productqty'))
         no_of_persons = int(request.POST.get('no_of_person'))
-        product = get_object_or_404(Product, id=product_id)
+        product = get_object_or_404(Product, id=product_id)#
+        price = Price(
+            
+        )
         if request.user:
             pally = Pally.objects.create(
                 author = request.user,
