@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'store.apps.StoreConfig',
     'orders.apps.OrdersConfig',
     'basket.apps.BasketConfig',
-    'account.apps.AccountConfig'
+    'account.apps.AccountConfig',
+    'payment.apps.PaymentConfig'
 ]
 
 MIDDLEWARE = [
@@ -145,5 +146,13 @@ AUTH_USER_MODEL = "account.UserBase"
 LOGIN_REDIRECT_URL = "/account/dashboard"
 LOGIN_URL = "/account/login/"
 
+# Stripe Payment
+os.environ.setdefault(
+    "STRIPE_PUBLISHABLE_KEY",
+    "pk_test_51HdJZCGMy64TwMH6Rye2Y0ai3MuHUnSV12H2QHTaUyMzqtiXuFqu877dD3FJlO4iiIoMDWhgCHJy1F2divt9NX6N00mX21Ykc5",
+)
+STRIPE_SECRET_KEY = (
+    "sk_test_51HdJZCGMy64TwMH6ly6Ep9J18PtEKclMUyUQkZNSZ1UT6g7AOMlacdXmqn2aKUHKVNgobTyN5QNIEjNkiHaoXesM00pmr8EJnC"
+)
 # Email setting
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
