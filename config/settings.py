@@ -162,7 +162,7 @@ os.environ.setdefault(
 STRIPE_SECRET_KEY = (
     os.environ.get('STRIPE_SECRET_KEY')
 )
-#STRIPE_SIGNING_SECRET = os.environ['STRIPE_SIGNING_SECRET']
+STRIPE_SIGNING_SECRET = os.environ['STRIPE_SIGNING_SECRET']
 # Email setting
 #EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
