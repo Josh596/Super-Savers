@@ -86,8 +86,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dvndljfe3ti06',
+        'HOST': 'ec2-3-221-100-217.compute-1.amazonaws.com',
+        'PORT': 5432,
+        'USER': 'pgjipgvrxsvzjm',
+        'PASSWORD': 'ab14b9f1b139edd13f3af60439827d46acaeef644dd6004bfe2de23bff895ba9'
     }
 }
 
@@ -171,4 +175,3 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 
-DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)

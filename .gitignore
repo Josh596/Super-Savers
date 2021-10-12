@@ -1,16 +1,4 @@
 env/
-config/__pycache__/
-store/__pycache__/
-orders/__pycache__/
-basket/__pycache__/
-account/__pycache__/
-store/migrations/
-account/migrations/
-orders/migrations/
-basket/migrations/
-store/migrations/__pycache__/
-orders/migrations/__pycache__/
-
 db.sqlite3
 
 
