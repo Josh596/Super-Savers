@@ -153,16 +153,16 @@ os.environ.setdefault(
     "pk_test_51HdJZCGMy64TwMH6Rye2Y0ai3MuHUnSV12H2QHTaUyMzqtiXuFqu877dD3FJlO4iiIoMDWhgCHJy1F2divt9NX6N00mX21Ykc5",
 )
 STRIPE_SECRET_KEY = (
-    credentials.STRIPE_SECRET_KEY
+    os.environ['STRIPE_SECRET_KEY']
 )
-STRIPE_SIGNING_SECRET = credentials.STRIPE_SIGNING_SECRET
+#STRIPE_SIGNING_SECRET = os.environ['STRIPE_SIGNING_SECRET']
 # Email setting
 #EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-DEFAULT_FROM_EMAIL = credentials.DEFAULT_FROM_EMAIL
+DEFAULT_FROM_EMAIL = os.environ['DEFAULT_FROM_EMAIL']
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = credentials.EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD = credentials.EMAIL_HOST_PASSWORD
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
