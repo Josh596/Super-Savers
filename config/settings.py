@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+from .credentials import credentials
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -152,8 +153,16 @@ os.environ.setdefault(
     "pk_test_51HdJZCGMy64TwMH6Rye2Y0ai3MuHUnSV12H2QHTaUyMzqtiXuFqu877dD3FJlO4iiIoMDWhgCHJy1F2divt9NX6N00mX21Ykc5",
 )
 STRIPE_SECRET_KEY = (
-    "sk_test_51HdJZCGMy64TwMH6ly6Ep9J18PtEKclMUyUQkZNSZ1UT6g7AOMlacdXmqn2aKUHKVNgobTyN5QNIEjNkiHaoXesM00pmr8EJnC"
+    credentials.STRIPE_SECRET_KEY
 )
-STRIPE_SIGNING_SECRET = 'whsec_c3efXEVf78C6IuOxptmJGizz2H9az8wv'
+STRIPE_SIGNING_SECRET = credentials.STRIPE_SIGNING_SECRET
 # Email setting
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+#EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+DEFAULT_FROM_EMAIL = credentials.DEFAULT_FROM_EMAIL
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = credentials.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = credentials.EMAIL_HOST_PASSWORD
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

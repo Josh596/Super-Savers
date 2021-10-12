@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from django.core.mail import send_mail
@@ -66,7 +67,7 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
         send_mail(
             subject,
             message,
-            'l@1.com',
+            settings.DEFAULT_FROM_EMAIL,
             [self.email],
             fail_silently=False,
         )
