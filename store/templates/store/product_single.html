@@ -79,16 +79,16 @@
                     </a> -->
                     <h4 class="mb-3 mt-1 price">&#8358;{{product.price.price}} <small>per {{product.price.quantity}}{{product.price.unit.title}}</small></h4>
                     <hr class="d-none d-lg-block">
-                    <span class="product-categories">
+                    <!-- <span class="product-categories">
                         Categories:
                         {% for category in product.categories_set.all %}
                         <a class="categories" href="{{ category.get_absolute_url }}">{{category.name}}</a>, 
                         {% endfor %}
-                    </span>
+                    </span> -->
                     <div class="button-wrapper mt-4 mb-4 d-none d-lg-block">
                         <a href="javascript:void(0)">
-                            <button type="button" class="text-uppercase  order-type-btn-popup " data-toggle="modal"
-                                data-target="#pallyorderModal" product_id="1606126541">Select Order Type</button>
+                            <button type="button" class="text-uppercase  order-type-btn-popup " data-bs-toggle="modal"
+                                data-bs-target="#orderModal"  data-product={{product.id}}>Order Now</button>
                         </a>
                     </div>
                 </div>
@@ -97,4 +97,78 @@
 
         </div>
     </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    window.onload = ()=>{
+
+    
+        var active_product_id  //Either pally form or single pay form
+        var pay_single = true;
+        $("input[type='number']").inputSpinner();
+        var orderModal = document.getElementById('orderModal');
+        orderModal.addEventListener('show.bs.modal', function (event) {
+            // Button that triggered the modal
+            var button = event.relatedTarget
+            // Extract info from data-bs-* attributes
+            active_product_id = button.getAttribute('data-product')
+            document.getElementById('order-quantity').value = 1
+            //document.getElementById('reset-product-qty').click();
+            // If necessary, you could initiate an AJAX request here
+            // and then do the updating in a callback.
+            //
+            // Update the modal's content.
+
+        })
+
+        function orderSuccess(){
+            $('#closeOrderModal').click()
+            $('#orderSuccessModal').modal('show');
+        }
+
+        $(document).on('click', '#addtocart-button', function (e) {
+        e.preventDefault();
+
+            if(pay_single){
+                product_id = active_product_id
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "basket:basket_add" %}',
+                    data: {
+                        productid: active_product_id,
+                        productqty: $('#order-quantity').val(),
+                        csrfmiddlewaretoken: "{{csrf_token}}",
+                        action: 'post'
+                    },
+                    success: function (json) {
+                        orderSuccess()
+                        document.getElementById("basket-qty").innerHTML = json.qty
+                    },
+                    error: function (xhr, errmsg, err) {}
+                });
+            }
+
+            else{
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "basket:basket_create_pally" %}',
+                    data: {
+                        productid: active_product_id,
+                        productqty: 1,
+                        no_of_person: $('#number_of_person').val(),
+                        csrfmiddlewaretoken: "{{csrf_token}}",
+                        action: 'post'
+                    },
+                    success: function (json) {
+                        orderSuccess()
+                        document.getElementById("basket-qty").innerHTML = json.qty
+                    },
+                    error: function (xhr, errmsg, err) {}
+                });
+            }
+        })
+    }
+
+</script>
 {% endblock %}

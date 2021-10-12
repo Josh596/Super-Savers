@@ -14,8 +14,8 @@ class ProductAdmin(admin.ModelAdmin):
                     'in_stock', 'created', 'updated']
     list_filter = ['in_stock', 'is_active']
     list_editable = ['price', 'in_stock']
-    readonly_fields = ('id',)
-    prepopulated_fields = {'slug': ('title',)}
+    readonly_fields = ('id','slug')
+
 
 @admin.register(Pally)
 class PallyAdmin(admin.ModelAdmin):
@@ -23,7 +23,8 @@ class PallyAdmin(admin.ModelAdmin):
                     'max_num_slot', 'created_on']
     list_filter = ['is_active']
     list_editable = ['price_per_slot']
-    prepopulated_fields = {'slug': ('author','expiry_date')}
+    readonly_fields = ('slug',)
+
 
 admin.site.register(Unit)
 admin.site.register(Price)

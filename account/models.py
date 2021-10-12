@@ -38,7 +38,7 @@ class CustomAccountManager(BaseUserManager):
 class UserBase(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(_('email address'), unique=True)
-    user_name = models.CharField(max_length=150, unique=True)
+    user_name = models.CharField(max_length=150)
     first_name = models.CharField(max_length=150, blank=True)
 
     # Delivery details

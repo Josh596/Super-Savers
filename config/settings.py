@@ -69,7 +69,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'store.context_processors.categories',
-                'basket.context_processors.basket'
+                'basket.context_processors.basket',
             ],
         },
     },
@@ -154,5 +154,6 @@ os.environ.setdefault(
 STRIPE_SECRET_KEY = (
     "sk_test_51HdJZCGMy64TwMH6ly6Ep9J18PtEKclMUyUQkZNSZ1UT6g7AOMlacdXmqn2aKUHKVNgobTyN5QNIEjNkiHaoXesM00pmr8EJnC"
 )
+STRIPE_SIGNING_SECRET = 'whsec_c3efXEVf78C6IuOxptmJGizz2H9az8wv'
 # Email setting
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

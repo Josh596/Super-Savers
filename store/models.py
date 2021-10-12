@@ -1,8 +1,10 @@
+from random import randint
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify 
 from account.models import UserBase
+
 
 
 class ProductManager(models.Manager):
@@ -37,10 +39,10 @@ class Unit(models.Model):
 class Price(models.Model):
     unit = models.ForeignKey(Unit, on_delete=models.CASCADE, related_name='related_quantity')
     quantity = models.IntegerField()
-    price = models.DecimalField(max_digits=5, decimal_places=2)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self) -> str:
-        return f'{self.price} per {self.unit.title}'
+        return f'{self.price} per {self.quantity} {self.unit.title}(s)'
 
     class Meta:
         pass
@@ -66,9 +68,11 @@ class Product(models.Model):
         ordering = ('-created',)
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            text = f'{self.title}-{self.id}'
-            self.slug = slugify(text)
+        if Product.objects.filter(title=self.title).exists():
+            extra = str(randint(1, 10000))
+            self.slug = slugify(self.title) + "-" + extra
+        else:
+            self.slug = slugify(self.title)
         super(Product, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -79,23 +83,23 @@ class Product(models.Model):
 
 class Pally(models.Model):
     author = models.ForeignKey(UserBase, on_delete=models.CASCADE, related_name='pally_creator', null=True)
-    product = models.OneToOneField(Product, on_delete=models.CASCADE)
-    price_per_slot = models.OneToOneField(Price, on_delete=models.CASCADE, related_name='related_pally')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    price_per_slot = models.ForeignKey(Price, on_delete=models.CASCADE, related_name='related_pally')
     max_num_slot = models.IntegerField()
     members = models.ManyToManyField(UserBase)
     slug = models.SlugField(max_length=50, null=True, blank=True)
     discount = models.DecimalField(max_digits=5,decimal_places=2, null=True, blank=True)
     is_active = models.BooleanField()
     created_on = models.DateTimeField(auto_now_add=True)
-    expiry_date = models.DateTimeField()
+    #expiry_date = models.DateTimeField(blank=True)
     pallies = PallyManager()
     objects = models.Manager()
 
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.product.slug)
-        self.price_per_slot = self.product.price.price/self.max_num_slot
+            self.slug = slugify(self.product.title)
+        
         super(Pally, self).save(*args, **kwargs)
 
     def get_absolute_url(self):

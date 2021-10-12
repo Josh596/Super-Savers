@@ -87,8 +87,7 @@
                     </span> -->
                     <div class="button-wrapper mt-4 mb-4 d-none d-lg-block">
                         <a href="javascript:void(0)">
-                            <button type="button" class="text-uppercase  order-type-btn-popup " data-toggle="modal"
-                                data-target="#pallyorderModal" product_id="1606126541">Select Order Type</button>
+                            <button type="button" class="text-uppercase pally-order-btn" data-pally="{{pally.id}}">BUY SLOT</button>
                         </a>
                     </div>
                 </div>
@@ -97,4 +96,33 @@
 
         </div>
     </div>
+{% endblock %}
+{% block script %}
+<script>
+    pallyorderbtns = document.getElementsByClassName("pally-order-btn")
+    for (let i = 0; i < pallyorderbtns.length; i++) {
+        pallyorderbtns[i].addEventListener("click", function(e){
+            btn = e.target;
+            productid = btn.getAttribute('data-pally')
+            $.ajax({
+                type: 'POST',
+                url: '{% url "basket:basket_add_pally" %}',
+                data: {
+                    productid: productid,
+                    productqty: 1,
+                    csrfmiddlewaretoken: "{{csrf_token}}",
+                    action: 'post'
+                },
+                success: function (json) {
+                    orderSuccess()
+                    document.getElementById("basket-qty").innerHTML = json.qty
+                },
+                error: function (xhr, errmsg, err) {
+                    alert(xhr.responseJSON.message)
+                }
+            });
+        })
+        
+        }
+</script>
 {% endblock %}

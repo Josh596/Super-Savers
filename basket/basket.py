@@ -1,4 +1,4 @@
-
+from decimal import Decimal
 from django.conf import settings
 
 from store.models import Pally, Product
@@ -18,7 +18,6 @@ class Basket():
         if settings.BASKET_SESSION_ID not in request.session:
             basket = self.session[settings.BASKET_SESSION_ID] = {}
         self.basket = basket
-        print(self.basket)
 
 
     def add(self, product, qty):
@@ -48,7 +47,7 @@ class Basket():
 
         for item in basket.values():
             print(item['price'])
-            item['price'] = float(item['price'])
+            item['price'] = Decimal(item['price'])
             item['total_price'] = item['price'] * item['qty']
             yield item
 
@@ -68,18 +67,18 @@ class Basket():
         self.save()
 
     def get_subtotal_price(self):
-        return sum(float(item['price']) * item['qty'] for item in self.basket.values())
+        return sum(Decimal(item['price']) * item['qty'] for item in self.basket.values())
 
     def get_total_price(self):
 
-        subtotal = sum(float(item['price']) * item['qty'] for item in self.basket.values())
+        subtotal = sum(Decimal(item['price']) * item['qty'] for item in self.basket.values())
 
         if subtotal == 0:
-            shipping = float(0.00)
+            shipping = Decimal(0.00)
         else:
-            shipping = float(100)
+            shipping = Decimal(100)
 
-        total = subtotal + float(shipping)
+        total = subtotal + Decimal(shipping)
         return total
 
     def delete(self, product):
@@ -117,20 +116,20 @@ class PallyBasket(Basket):
         if pally_id in self.basket:
             self.basket[pally_id]['qty'] = qty #Change no of slots purchased
         else:
-            self.basket[pally_id] = {'price':str(pally.price_per_slot), 'qty':qty}
+            self.basket[pally_id] = {'price':str(pally.price_per_slot.price), 'qty':qty}
 
         self.save()
     
     def __iter__(self):
         pally_ids = self.basket.keys()
-        pallies = Pally.pallies.filter(id__in=pally_ids)
+        pallies = Pally.objects.filter(id__in=pally_ids)
         basket = self.basket.copy()
 
         for pally in pallies:
             basket[str(pally.id)]['pally'] = pally
 
         for item in basket.values():
-            item['price'] = float(item['price'])
+            item['price'] = Decimal(item['price'])
             item['total_price'] = item['price'] * item['qty']
             yield item
 
@@ -141,6 +140,23 @@ class PallyBasket(Basket):
             self.basket[pally_id]['qty'] = qty
         self.save()
 
+    def clear(self):
+        # Remove basket from session
+        self.session.pop(settings.PALLY_BASKET_SESSION_ID, None)
+        self.save()
+
+    def delete(self, pally):
+        """
+        Delete item from session data
+        """
+        pally_id = str(pally)
+
+        if pally_id in self.basket:
+            del self.basket[pally_id]
+            self.save()
+
+    def save(self):
+        self.session.modified = True
 
 
 

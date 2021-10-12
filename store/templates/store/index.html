@@ -58,7 +58,7 @@
                     type="button" role="tab" aria-controls="v-pills-pally" aria-selected="false">Pally</button>
             </div>
             <!-- Product Filters-->
-            <ul class="nav nav-tabs justify-content-end">
+            <!-- <ul class="nav nav-tabs justify-content-end">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
                         aria-expanded="false">Categories</a>
@@ -78,7 +78,7 @@
                         <li><a class="dropdown-item" href="#">Price (High to Low)</a></li>
                     </ul>
                 </li>
-            </ul>
+            </ul> -->
         </div>
         <!-- Product Filters-->
 
@@ -89,12 +89,12 @@
 
             <div class="tab-pane fade show active" id="v-pills-product" role="tabpanel"
                 aria-labelledby="v-pills-product-tab">
-                <div class="d-flex">
+                <div class="d-flex flex-wrap" style="gap: 10px;">
                     {% for product in products %}
                     <div class="card w-25">
                         <img src="{{product.image.url}}" class="card-img-top" alt="{{product.title}}">
                         <div class="card-body">
-                            <h5 class="card-title"><a class="nav-link" href="{{ product.get_absolute_url }}">{{product.title }}</a></h5>
+                            <h5 class="card-title"><a class="nav-link" href="{{ product.get_absolute_url }}">{{product.title }} ({{product.price.quantity}} {{product.price.unit}})</a></h5>
                             <p class="card-text">&#8358; {{ product.price }}</p>
                             <a href="#" class="btn btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#orderModal" data-product={{product.id}}>ORDER NOW</a>
@@ -111,15 +111,15 @@
 
 
             <div class="tab-pane fade" id="v-pills-pally" role="tabpanel" aria-labelledby="v-pills-pally-tab">
-                <div class="d-flex">
+                <div class="d-flex flex-wrap" style="gap: 10px;">
                     {% for pally in pallies %}
                     <div class="card w-25">
                         <img src="{{pally.product.image.url}}" class="card-img-top" alt="{{pally.product.title}}">
                         <div class="card-body">
-                            <h5 class="card-title"><a class="nav-link" href="{{ pally.get_absolute_url }}">{{pally.product.title }}</a></h5>
+                            <h5 class="card-title"><a class="nav-link" href="{{ pally.get_absolute_url }}">{{pally.product.title}}({{pally.product.price.quantity}} {{pally.product.price.unit}})</a></h5>
                             </h5>
-                            <p class="card-text">&#8358; {{pally.price_per_slot.price}} per slot</p>
-                            <a href="#" class="btn btn-primary" data-product="{{pally.product.id}}">BUY SLOT</a>
+                            <p class="card-text">&#8358; {{pally.price_per_slot.price}} per slot({% widthratio pally.product.price.quantity pally.max_num_slot 1 %})</p>
+                            <button href="#" class="btn btn-primary pally-order-btn" data-pally="{{pally.id}}">BUY SLOT</button>
                         </div>
                     </div>
                     {% empty %}
@@ -136,92 +136,6 @@
     <!-- Store Content Ends -->
 </div>
 
-<!-- All modals -->
-<!-- Modal -->
-<div class="modal fade " id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Buttons for Pay by myself and Pally -->
-                <form>
-                    <ul class="nav nav-pills ms-3 mb-3 " id="pills-tab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <input id="pills-myself-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-paymyself" type="radio" role="tab" aria-controls="pills-home"
-                                aria-selected="true" value="Pay by Myself" name="order-type" checked>
-                            <label for="pills-myself-tab">Pay by myself</label>
-                        </li>
-                        <li class="nav-item ms-3" role="presentation">
-                            <input  id="pills-pally-tab" data-bs-toggle="pill"
-                                data-bs-target="#pills-pally" type="radio" role="tab" aria-controls="pills-profile"
-                                aria-selected="false" value="Pally(Split bill)" name="order-type">
-                            <label for="pills-pally-tab">Pally(Split bill)</label>
-                        </li>
-                    </ul>
-                </form>
-                <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade show active" id="pills-paymyself" role="tabpanel">
-                        <form id="order-product-form" method="POST">
-                            {% csrf_token %}
-                            <div class="pally-box form-group m-4" style="display: block;">
-                                <label style=" font-size: 14px;color: #4F4F4F; display: block;">Quantity</label>
-                                <input type="hidden" id="active-product-id">
-                                <div class="d-flex" style="width: 30%;">
-                                    <input type="number" id="order-quantity" value="1" name="order-quantity"  min="1" step="1">
-                                </div>
-                            </div>
-                            <button hidden type="reset" id="reset-product-qty"></button>
-                        </form>
-                    </div>
-
-                    <div class="tab-pane fade" id="pills-pally" role="tabpanel">
-                        <form method="POST" id="order-pally-form">
-                            {% csrf_token %}
-                            <div class="pally-box form-group m-4">
-                                <label style=" font-size: 14px;color: #4F4F4F;">Maximum of 20 people to pally with</label>
-                                <input type="hidden" id="active-pally-id">
-                                <input type="number" class="form-control"
-                                    style=" width: 20%;border-radius: 5px;border: 2px solid #AAAAAA;height: 44px;color: #333333;"
-                                    value="20" name="number_of_person" id="number_of_person">
-                                <span class="pally_max_size" style="color:#f00;"></span>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer" style="display: block;">
-                <button type="button" class="btn btn-secondary" id="closeOrderModal" style="display: block; width: 100%;" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="addtocart-button" style="display: block; width: 100%;">Order</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Success Modal -->
-<!-- Modal HTML -->
-<div id="orderSuccessModal" class="modal fade">
-	<div class="modal-dialog modal-confirm">
-		<div class="modal-content">
-			<div class="modal-header justify-content-center">
-				<div class="icon-box">
-					<i class="material-icons">&#xE876;</i>
-				</div>
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			</div>
-			<div class="modal-body text-center">
-				<h4>Great!</h4>	
-				<p>Item(s) has been added to your cart.</p>
-			</div>
-		</div>
-        <div class="modal-footer" style="display: block;">
-            <button type="button" class="btn btn-secondary" id="closeSuccessModal" style="display: block; width: 100%;" data-bs-dismiss="modal">Close</button>
-        </div>
-	</div>
-</div>
-<!-- Modals End -->
 {% endblock %}
 
 {% block script %}
@@ -236,7 +150,7 @@
             var button = event.relatedTarget
             // Extract info from data-bs-* attributes
             active_product_id = button.getAttribute('data-product')
-            document.getElementById('reset-product-qty').click();
+            document.getElementById('order-quantity').value = 1
             // If necessary, you could initiate an AJAX request here
             // and then do the updating in a callback.
             //
@@ -244,7 +158,7 @@
 
         })
     
-        function paymentSuccess(){
+        function orderSuccess(){
             $('#closeOrderModal').click()
             $('#orderSuccessModal').modal('show');
         }
@@ -264,7 +178,7 @@
                         action: 'post'
                     },
                     success: function (json) {
-                        paymentSuccess()
+                        orderSuccess()
                         document.getElementById("basket-qty").innerHTML = json.qty
                     },
                     error: function (xhr, errmsg, err) {}
@@ -274,7 +188,7 @@
             else{
                 $.ajax({
                     type: 'POST',
-                    url: '{% url "basket:basket_add_pally" %}',
+                    url: '{% url "basket:basket_create_pally" %}',
                     data: {
                         productid: active_product_id,
                         productqty: 1,
@@ -283,13 +197,40 @@
                         action: 'post'
                     },
                     success: function (json) {
-                        paymentSuccess()
+                        orderSuccess()
                         document.getElementById("basket-qty").innerHTML = json.qty
                     },
                     error: function (xhr, errmsg, err) {}
                 });
             }
         })
+
+        pallyorderbtns = document.getElementsByClassName("pally-order-btn")
+        for (let i = 0; i < pallyorderbtns.length; i++) {
+            pallyorderbtns[i].addEventListener("click", function(e){
+            btn = e.target;
+            productid = btn.getAttribute('data-pally')
+            $.ajax({
+                type: 'POST',
+                url: '{% url "basket:basket_add_pally" %}',
+                data: {
+                    productid: productid,
+                    productqty: 1,
+                    csrfmiddlewaretoken: "{{csrf_token}}",
+                    action: 'post'
+                },
+                success: function (json) {
+                    orderSuccess()
+                    document.getElementById("basket-qty").innerHTML = json.qty
+                },
+                error: function (xhr, errmsg, err) {
+                    alert(xhr.responseJSON.message)
+                }
+            });
+            })
+            
+        }
+
 
     
 

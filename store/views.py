@@ -9,7 +9,6 @@ def index(request):
     products = Product.products.all()
     pallies = Pally.pallies.all()
 
-
     # Note -- Probably add pagination
     context = {
         'products': products,
