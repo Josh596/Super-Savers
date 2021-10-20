@@ -4,6 +4,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify 
 from django.db.models.signals import pre_save
+from django.utils import timezone
 from django.dispatch import receiver
 from account.models import UserBase
 from vendor.models import Vendor
@@ -16,7 +17,7 @@ class ProductManager(models.Manager):
 
 class PallyManager(models.Manager):
     def get_queryset(self):
-        return super(PallyManager, self).get_queryset().filter(available_slots__gt = 0)
+        return super(PallyManager, self).get_queryset().filter(available_slots__gt = 0, expiry_date__lt = timezone.now() )
 
 
 class Category(models.Model):
