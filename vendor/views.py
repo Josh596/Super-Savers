@@ -1,3 +1,4 @@
+from django.forms.models import inlineformset_factory
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
@@ -10,8 +11,8 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.db.utils import IntegrityError
 from account.tokens import account_activation_token
 from orders.models import OrderItem
-from store.models import Product, Pally
-from vendor.forms import AddProductForm, VendorRegistrationForm
+from store.models import Price, Product, Pally
+from vendor.forms import AddProductForm, PriceCreationForm, VendorRegistrationForm
 from vendor.models import Vendor
 
 # Create your views here.
@@ -110,8 +111,10 @@ def edit_product(request, product_id):
     products = vendor.store_product_related.all()
     product = get_object_or_404(products, id = product_id)
     form = AddProductForm(request.POST or None,request.FILES or None,instance = product)
+    price_form = PriceCreationForm(request.POST or None, instance=product.price)
     if request.method == 'POST':
         if form.is_valid():
+            price_form.save()
             new_product = form.save(commit=False)
             new_product.vendor = vendor
             new_product.save()
@@ -149,16 +152,19 @@ def edit_details(request):
 def add_product(request):
     vendor = request.user.vendor
     product_form = AddProductForm(request.POST or None, request.FILES or None)
+    price_form = PriceCreationForm(request.POST or None)
     if request.method == 'POST':
-        if product_form.is_valid():
+        if product_form.is_valid() and price_form.is_valid():
+            price = price_form.save()
             new_product = product_form.save(commit=False)
+            new_product.price = price
             new_product.vendor = vendor
             new_product.save()
             product_form.save_m2m()
 
         return redirect('vendor:products')
 
-    return render(request, 'vendor/product-edit.html', {'form':product_form})
+    return render(request, 'vendor/product-edit.html', {'form':product_form, 'price_form':price_form})
 
 
 # @login_required

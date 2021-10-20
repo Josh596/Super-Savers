@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'payment.apps.PaymentConfig',
     'vendor.apps.VendorConfig',
+    'general.apps.GeneralConfig',
     'crispy_forms',
 ]
 

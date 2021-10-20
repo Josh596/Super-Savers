@@ -34,8 +34,8 @@ def get_subtotal_price(request):
 def basket_summary(request):
     basket = Basket(request)
     pally_basket = PallyBasket(request)
-
-    return render(request, 'basket/cart.html', {'basket': basket, 'pally_basket':pally_basket})
+    price = get_total_price(request)
+    return render(request, 'basket/cart.html', {'basket': basket, 'pally_basket':pally_basket, 'total_cost':price})
 
 
 def basket_add(request):
@@ -56,9 +56,8 @@ def pallybasket_add(request):
         pally_id = int(request.POST.get('productid'))
         product_qty = int(request.POST.get('productqty'))
         pally = get_object_or_404(Pally, id=pally_id)
-        if len(pally.members.all()) < pally.max_num_slot:
+        if pally.available_slots > 0:
             basket.add(pally=pally, qty=product_qty)
-
             basketqty = get_total_qty(request)
             response = JsonResponse({'qty': basketqty})
             return response
@@ -72,15 +71,13 @@ def create_pally(request):
         product_qty = int(request.POST.get('productqty'))
         no_of_persons = int(request.POST.get('no_of_person'))
         product = get_object_or_404(Product, id=product_id)
-        unit = Unit.objects.get_or_create(title='slot')[0]
-        print(unit)
+        unit = product.price.unit
         #Default unit for Pally is slot
-
 
         price_object = Price.objects.create(
             unit = unit,
-            quantity = 1,
-            price = product.price.price/no_of_persons
+            quantity = round(product.price.quantity/no_of_persons, 2),
+            price = product.get_discount_price()/no_of_persons
         )
         price_object.save()
 

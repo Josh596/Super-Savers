@@ -9,5 +9,5 @@ urlpatterns = [
     path('orderplaced/', views.order_placed, name='order_placed'),
     path('error/', views.Error.as_view(), name='error'),
     path('verify/<ref>', views.verify, name='verify'),
-    path('webhook/', views.stripe_webhook),
+    path('webhook/', views.paystack_webhook),
 ]

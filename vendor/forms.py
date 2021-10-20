@@ -1,4 +1,4 @@
-from store.models import Product, Pally
+from store.models import Product, Price
 from .models import Vendor
 from django import forms
 
@@ -38,8 +38,13 @@ class AddProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        exclude = ('vendor', 'created', 'updated', 'slug')
+        exclude = ('vendor', 'created', 'updated', 'slug', 'price')
 
+
+class PriceCreationForm(forms.ModelForm):
+    class Meta:
+        model = Price
+        fields = '__all__'
 # class AddPallyForm(forms.ModelForm):
 
 #     def __init__(self, *args, **kwargs):

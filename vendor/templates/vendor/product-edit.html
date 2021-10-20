@@ -9,6 +9,26 @@
     <form method="post" class="w-100" style="border: 1px solid black;" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form|crispy }}
+        <div class="d-flex flex-row" style="gap: 5px;">
+            <div>
+                <label for="{{ price_form.price.id_for_label }}">Price:</label>
+                {{ price_form.price }}
+            </div>
+            <div>for</div>
+
+            <div>
+                <label for="{{ price_form.quantity.id_for_label }}">Quantity:</label>
+                {{ price_form.quantity }}
+            </div>
+
+            <div>
+                <label for="{{ price_form.unit.id_for_label }}">Unit:</label>
+                {{ price_form.unit }}
+            </div>
+
+
+        </div>
+        
         <button class="btn btn-primary" type="submit">Submit</button>
     </form>
  

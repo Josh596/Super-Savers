@@ -19,8 +19,8 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Pally)
 class PallyAdmin(admin.ModelAdmin):
-    list_display = ['author', 'slug', 'price_per_slot',
-                    'max_num_slot', 'created_on']
+    list_display = ['author', 'price_per_slot',
+                    'max_num_slot','available_slots', 'created_on']
     list_filter = ['is_active']
     list_editable = ['price_per_slot']
     readonly_fields = ('slug',)

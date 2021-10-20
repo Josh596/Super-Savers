@@ -49,11 +49,11 @@
     <div class="p-4">
       <ul class="list-unstyled mb-4">
         <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Order Subtotal
-          </strong><strong>&#x20A6;{{basket.get_subtotal_price}}</strong></li>
+          </strong><strong>&#x20A6;{{subtotal_cost}}</strong></li>
         <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Shipping and
             handling</strong><strong>&#x20A6;{{0}}</strong></li>
         <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Total</strong>
-          <h5 class="font-weight-bold">&#x20A6;{{basket.get_total_price}}</h5>
+          <h5 class="font-weight-bold">&#x20A6;{{total_cost}}</h5>
         </li>
     </div>
   </div>
@@ -104,7 +104,7 @@
     var handler = PaystackPop.setup({
       key: '{{PAYSTACK_PUBLIC_KEY}}', // Replace with your public key
       email: document.getElementById('email-address').value,
-      amount: parseInt('{{basket.get_total_price}}') * 100, // the amount value is multiplied by 100 to convert to the lowest currency unit
+      amount: parseInt('{{total_cost}}') * 100, // the amount value is multiplied by 100 to convert to the lowest currency unit
       currency: 'NGN', // Use GHS for Ghana Cedis or USD for US Dollars
       ref: order_key,
       callback: function (response) {

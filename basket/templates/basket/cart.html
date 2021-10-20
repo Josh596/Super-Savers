@@ -102,11 +102,11 @@
             <div class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold">Order summary </div>
             <div class="p-4">
                 <ul class="list-unstyled mb-4">
-                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted" id="subtotal">Order Subtotal </strong><strong>{{basket.get_subtotal_price|add:pally_basket.get_subtotal_price}}</strong></li>
-                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Shipping and handling</strong><strong>{{200}}</strong></li>
+                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Order Subtotal </strong><strong id="subtotal">{{basket.get_subtotal_price|add:pally_basket.get_subtotal_price}}</strong></li>
+                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Shipping and handling</strong><strong>{{0}}</strong></li>
                 <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Tax</strong><strong>$0.00</strong></li>
                 <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Total</strong>
-                    <h5 class="font-weight-bold" id="total">{{basket.get_total_price|add:pally_basket.get_total_price}}</h5>
+                    <h5 class="font-weight-bold" id="total">{{total_cost}}</h5>
                 </li>
                 </ul><a href="{% url 'payment:basket' %}" class="btn btn-dark rounded-pill py-2 btn-block">Procceed to checkout</a>
             </div>
@@ -138,7 +138,7 @@
             let prodqty = this.value
             $.ajax({
                 type: "POST",
-                url: '{% url "basket:basket_update" %}',
+                url: url,
                 data: {
                     productid: prod_id,
                     productqty: prodqty,
@@ -146,8 +146,6 @@
                     action: "post",
                 },
                 success: function (json) {
-        
-                    total = (parseFloat(json.subtotal) + 11.50).toFixed(2);
                     document.getElementById("basket-qty").innerHTML = json.qty;
                     document.getElementById("subtotal").innerHTML = json.subtotal;
                     document.getElementById("total").innerHTML = total;

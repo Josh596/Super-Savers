@@ -77,7 +77,7 @@
                         32% OFF
                         | <span class="clr-gr">In Season</span>
                     </a> -->
-                    <h4 class="mb-3 mt-1 price">&#8358;{{product.price.price}} <small>per {{product.price.quantity}}{{product.price.unit.title}}</small></h4>
+                    <h4 class="mb-3 mt-1 price">&#8358; {{product.get_discount_price}} <del>&#8358;{{ product.price.price }}</del> <small>per {{product.price.quantity}}{{product.price.unit.title}}</small></h4>
                     <hr class="d-none d-lg-block">
                     <!-- <span class="product-categories">
                         Categories:
