@@ -78,13 +78,14 @@
                         | <span class="clr-gr">In Season</span>
                     </a> -->
                     <h4 class="mb-3 mt-1 price">&#8358;{{pally.price_per_slot.price}} <small>per {{pally.price_per_slot.quantity}} {{pally.price_per_slot.unit.title}}</small></h4>
+                    <h5>{{pally.members.count}} out of {{pally.max_num_slot}}</h5>
                     <hr class="d-none d-lg-block">
-                    <!-- <span class="product-categories">
+                    <span class="product-categories">
                         Categories:
-                        {% for category in product.categories_set.all %}
+                        {% for category in product.categories.all %}
                         <a class="categories" href="{{ category.get_absolute_url }}">{{category.name}}</a>, 
                         {% endfor %}
-                    </span> -->
+                    </span>
                     <div class="button-wrapper mt-4 mb-4 d-none d-lg-block">
                         <a href="javascript:void(0)">
                             <button type="button" class="text-uppercase pally-order-btn" data-pally="{{pally.id}}">BUY SLOT</button>

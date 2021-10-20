@@ -72,7 +72,8 @@ def create_pally(request):
         product_qty = int(request.POST.get('productqty'))
         no_of_persons = int(request.POST.get('no_of_person'))
         product = get_object_or_404(Product, id=product_id)
-        unit = Unit.objects.get_or_create(title__exact='slot')[0]
+        unit = Unit.objects.get_or_create(title='slot')[0]
+        print(unit)
         #Default unit for Pally is slot
 
 
@@ -84,7 +85,7 @@ def create_pally(request):
         price_object.save()
 
         pally = Pally.objects.create(
-            author = request.user,
+            author = None,
             product = product,
             price_per_slot = price_object,
             max_num_slot = no_of_persons,

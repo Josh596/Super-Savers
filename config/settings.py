@@ -12,10 +12,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 import dj_database_url
 
 
-
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -35,6 +36,8 @@ ALLOWED_HOSTS = ['supersavers.herokuapp.com', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'adminlte3',
+    'adminlte3_theme',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,7 +48,9 @@ INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
     'basket.apps.BasketConfig',
     'account.apps.AccountConfig',
-    'payment.apps.PaymentConfig'
+    'payment.apps.PaymentConfig',
+    'vendor.apps.VendorConfig',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
@@ -84,16 +89,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dvndljfe3ti06',
-        'HOST': 'ec2-3-221-100-217.compute-1.amazonaws.com',
-        'PORT': 5432,
-        'USER': 'pgjipgvrxsvzjm',
-        'PASSWORD': 'ab14b9f1b139edd13f3af60439827d46acaeef644dd6004bfe2de23bff895ba9'
-    }
-}
+DATABASES = {}
 
 
 
@@ -154,24 +150,22 @@ AUTH_USER_MODEL = "account.UserBase"
 LOGIN_REDIRECT_URL = "/account/dashboard"
 LOGIN_URL = "/account/login/"
 
-# Stripe Payment
-os.environ.setdefault(
-    "STRIPE_PUBLISHABLE_KEY",
-    "pk_test_51HdJZCGMy64TwMH6Rye2Y0ai3MuHUnSV12H2QHTaUyMzqtiXuFqu877dD3FJlO4iiIoMDWhgCHJy1F2divt9NX6N00mX21Ykc5",
-)
-STRIPE_SECRET_KEY = (
-    os.environ.get('STRIPE_SECRET_KEY')
-)
-STRIPE_SIGNING_SECRET = os.environ['STRIPE_SIGNING_SECRET']
-# Email setting
-#EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
+EMAIL_HOST = 'smtp-mail.outlook.com'
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 
+PAYSTACK_SECRET_KEY = os.environ.get('PAYSTACK_SECRET_KEY')
+PAYSTACK_PUBLIC_KEY = os.environ.get('PAYSTACK_PUBLIC_KEY')
+
+database_uri = os.environ.get('DATABASE_URL')
+DATABASES['default'] = dj_database_url.parse(database_uri,conn_max_age=600)

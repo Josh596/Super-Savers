@@ -48,7 +48,7 @@ class Price(models.Model):
         pass
 
 class Product(models.Model):
-    categories = models.ForeignKey(Category, related_name='product', on_delete=models.CASCADE)
+    categories = models.ManyToManyField(Category, related_name='product', blank=True)
     created_by = models.ForeignKey(UserBase, on_delete=models.CASCADE, related_name='product_creator', null=True, blank=True)
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255, default='admin')
@@ -56,6 +56,7 @@ class Product(models.Model):
     image = models.ImageField(upload_to='images/', default='images/default.png')
     slug = models.SlugField(max_length=50, null=True, blank=True)
     price = models.ForeignKey(Price, on_delete=models.CASCADE, related_name='related_product')
+    discount = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='Product Discount in %')
     in_stock = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)

@@ -22,7 +22,7 @@
     <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'store:index'%}">SUPER SAVERS</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse p-3 justify-content-end" id="navbarSupportedContent">
@@ -31,12 +31,23 @@
                     <button class="btn btn-outline-success" type="submit" disabled>Search</button>
                 </form>
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="nav-item">
+                    {% if user.vendor %}
+                    <li class="nav-item p-2">
+                        <!-- For total item in basket -->
+                        <a class="nav-link vendor-btn" aria-current="page" href="{% url 'vendor:dashboard' %}">Vendor Dashboard</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item p-2">
+                        <!-- For total item in basket -->
+                        <a class="nav-link vendor-btn" # aria-current="page" href="{% url 'vendor:register' %}">Become a Vendor/Supplier</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item p-2">
                         <!-- For total item in basket, add pally and product -->
                         <a class="nav-link active" aria-current="page" href="{% url 'basket:basket_summary' %}"><i class="fa fa-shopping-cart" style="font-size:24px"><sup id="basket-qty">{{basket_total}}</sup></i>Cart</a>
                     </li>
                     {% if user.is_authenticated %}
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown p-2">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Account
                         </a>
@@ -48,7 +59,7 @@
                         </ul>
                     </li>
                     {% else %}
-                    <li class="nav-item">
+                    <li class="nav-item p-2">
                         <a class="nav-link" href="{% url 'account:login' %}">Login</a>
                     </li>
                     {% endif %}

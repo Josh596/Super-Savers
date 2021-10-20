@@ -102,11 +102,11 @@
             <div class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold">Order summary </div>
             <div class="p-4">
                 <ul class="list-unstyled mb-4">
-                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Order Subtotal </strong><strong>{{basket.get_subtotal_price|add:pally_basket.get_subtotal_price}}</strong></li>
+                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted" id="subtotal">Order Subtotal </strong><strong>{{basket.get_subtotal_price|add:pally_basket.get_subtotal_price}}</strong></li>
                 <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Shipping and handling</strong><strong>{{200}}</strong></li>
                 <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Tax</strong><strong>$0.00</strong></li>
                 <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Total</strong>
-                    <h5 class="font-weight-bold">{{basket.get_total_price|add:pally_basket.get_total_price}}</h5>
+                    <h5 class="font-weight-bold" id="total">{{basket.get_total_price|add:pally_basket.get_total_price}}</h5>
                 </li>
                 </ul><a href="{% url 'payment:basket' %}" class="btn btn-dark rounded-pill py-2 btn-block">Procceed to checkout</a>
             </div>
@@ -123,8 +123,8 @@
     qtyinputs = document.getElementsByClassName("order-qty");
     for (var i = 0; i < qtyinputs.length; i++) {
         qtyinputs[i].addEventListener("change", function (e) {
-            let input = e.target
-            let prod_id = input.getAttribute('data-product')
+            let btn = e.target
+            let prod_id = btn.getAttribute('data-product')
             //Check if it's a pally or product here and change url and data accourdingly
 			let is_pally = Boolean(btn.getAttribute('data-pally'))
             let url = '{% url "basket:basket_update" %}'

@@ -3,16 +3,17 @@ import os
 
 import stripe
 from django.contrib.auth.decorators import login_required
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView
 from django.conf import settings
 from stripe.api_resources import payment_intent
-
+from pypaystack import Transaction
 from basket.basket import Basket, PallyBasket
 from orders.views import payment_confirmation
 
+from .unique_order_key_gen import unique_order_key_generator
 
 def order_placed(request):
     basket = Basket(request)
@@ -23,7 +24,6 @@ def order_placed(request):
             pally.is_active = True
         pally.members.add(request.user)
         pally.save()
-    print(pallybasket.__len__(), 'As 200000')
     basket.clear()
     pallybasket.clear()
     return render(request, 'payment/orderplaced.html')
@@ -43,16 +43,17 @@ def BasketView(request):
     total = total.replace('.', '')
     total = int(total)
 
-    stripe.api_key = settings.STRIPE_SECRET_KEY
-    intent = stripe.PaymentIntent.create(
-        amount=total,
-        currency='gbp',
-        metadata={'userid': request.user.id}
-    )
+    order_key = unique_order_key_generator()
+    pk_public = settings.PAYSTACK_PUBLIC_KEY
+    return render(request, 'payment/payment_form.html', {'PAYSTACK_PUBLIC_KEY':pk_public, 'basket':basket, 'order_key':order_key})
 
-    return render(request, 'payment/payment_form.html', {'client_secret': intent.client_secret, 
-                                                            'STRIPE_PUBLISHABLE_KEY': os.environ.get('STRIPE_PUBLISHABLE_KEY')})
 
+def verify(request, ref):
+    transaction = Transaction(authorization_key=settings.PAYSTACK_SECRET_KEY)
+    response = transaction.verify(id)
+    data = JsonResponse(response, safe=False)
+    payment_confirmation(ref)
+    return data
 
 @csrf_exempt
 def stripe_webhook(request):
