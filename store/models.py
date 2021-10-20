@@ -4,6 +4,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify 
 from account.models import UserBase
+from vendor.models import Vendor
 
 
 
@@ -48,10 +49,9 @@ class Price(models.Model):
         pass
 
 class Product(models.Model):
-    categories = models.ManyToManyField(Category, related_name='product', blank=True)
-    created_by = models.ForeignKey(UserBase, on_delete=models.CASCADE, related_name='product_creator', null=True, blank=True)
+    categories = models.ManyToManyField(Category, related_name='%(app_label)s_%(class)s_related', blank=True)
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='%(app_label)s_%(class)s_related', null=True, blank=True)
     title = models.CharField(max_length=255)
-    author = models.CharField(max_length=255, default='admin')
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to='images/', default='images/default.png')
     slug = models.SlugField(max_length=50, null=True, blank=True)

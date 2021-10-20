@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.shortcuts import get_object_or_404, render
 from .models import Category, Product, Pally
@@ -32,3 +33,17 @@ def pally_detail(request, id, slug):
     pally = get_object_or_404(Pally, slug=slug, id=id)
 
     return render(request, 'store/pally_single.html', {'pally': pally})
+
+
+def search_all(request):
+    query = request.GET.get('q')
+    if query:
+        lookups= Q(title__icontains=query) | Q(description__icontains=query)
+        products = Product.products.filter(lookups)
+        print(products)
+        pallies = Pally.pallies.filter(product__in = products)
+    else:
+        products = Product.products.all()
+        pallies = Pally.pallies.all()
+
+    return render(request, 'store/search-result.html', {'products':products, 'pallies':pallies})

@@ -16,7 +16,7 @@
 
     {% endblock %}
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
     <!-- Nav bar at the top -->
     <nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
@@ -26,9 +26,9 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse p-3 justify-content-end" id="navbarSupportedContent">
-                <form class="d-flex w-50 me-auto" >
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" disabled>
-                    <button class="btn btn-outline-success" type="submit" disabled>Search</button>
+                <form class="d-flex w-50 me-auto" method="get" action="{% url 'store:search' %}">
+                    <input class="form-control me-2" type="search" placeholder="Search Products and Pallies" aria-label="Search" name="q">
+                    <button class="btn btn-outline-success" type="submit" >Search</button>
                 </form>
                 <ul class="nav navbar-nav navbar-right">
                     {% if user.vendor %}
@@ -70,12 +70,14 @@
     <!-- End of Nav Bar -->
 
     <!-- Content -->
+    <div class="wrapper flex-grow-1">
     {% block content %}
     {% endblock %}
+    </div>
     <!-- End of Content -->
 
     <!-- Footer -->
-
+    {% include 'base_footer.html' %}
     <!-- End of Footer -->
 
 

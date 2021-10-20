@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row container">
+    <div class="row container">
+        <span>
+            <h2>Products</h2>
+        </span>
+        <hr>
+        {% include 'store/product_list_template.html' %}
+    </div>
+
+
+    <div class="row container">
+        <span>
+            <h2>Pallies</h2>
+        </span>
+        <hr>
+        {% include 'store/pally_list_template.html' %}
+    </div>
+</div>
+{% endblock %}

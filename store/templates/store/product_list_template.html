@@ -4,7 +4,7 @@
         <img src="{{product.image.url}}" class="card-img-top" alt="{{product.title}}">
         <div class="card-body">
             <h5 class="card-title"><a class="nav-link" href="{{ product.get_absolute_url }}">{{product.title }} ({{product.price.quantity}} {{product.price.unit}})</a></h5>
-            <p class="card-text">&#8358; {{ product.price }}</p>
+            <p class="card-text">&#8358; {{product.price}} <del>&#8358;{{ product.price }}</del></p>
             <a href="#" class="btn btn-primary" data-bs-toggle="modal"
                 data-bs-target="#orderModal" data-product={{product.id}}>ORDER NOW</a>
         </div>
