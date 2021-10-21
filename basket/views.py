@@ -79,7 +79,7 @@ def create_pally(request):
             quantity = round(product.price.quantity/no_of_persons, 2),
             price = product.get_discount_price()/no_of_persons
         )
-        price_object.save()
+        
 
         pally = Pally.objects.create(
             author = None,
@@ -88,7 +88,7 @@ def create_pally(request):
             max_num_slot = no_of_persons,
             is_active = False
         )
-        pally.save()
+        
 
         basket.add(pally=pally, qty=product_qty)
 

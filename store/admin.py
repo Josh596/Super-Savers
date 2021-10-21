@@ -23,7 +23,7 @@ class PallyAdmin(admin.ModelAdmin):
                     'max_num_slot','available_slots', 'created_on']
     list_filter = ['is_active']
     list_editable = ['price_per_slot']
-    readonly_fields = ('slug',)
+    readonly_fields = ('slug','id')
 
 
 admin.site.register(Unit)

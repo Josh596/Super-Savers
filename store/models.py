@@ -1,3 +1,4 @@
+from datetime import datetime
 from random import randint
 from django.conf import settings
 from django.db import models
@@ -17,7 +18,8 @@ class ProductManager(models.Manager):
 
 class PallyManager(models.Manager):
     def get_queryset(self):
-        return super(PallyManager, self).get_queryset().filter(available_slots__gt = 0, expiry_date__lt = timezone.now() )
+        print( datetime.utcnow())
+        return super(PallyManager, self).get_queryset().filter(available_slots__gt = 0, expiry_date__gt = datetime.utcnow() )
 
 
 class Category(models.Model):

@@ -23,13 +23,14 @@ def order_placed(request):
     pallybasket = PallyBasket(request)
     for item in pallybasket:
         pally = item['pally']
+        print(pally)
         if not pally.is_active:
             pally.is_active = True
         if not pally.author:
             pally.author = request.user
         pally.members.add(request.user)
         pally.available_slots -= item['qty']
-        pally.expiry_date = timezone.now() + timedelta(days = 2)
+        pally.expiry_date = datetime.utcnow() + timedelta(days = 2)
         pally.save()
     basket.clear()
     pallybasket.clear()
@@ -61,7 +62,7 @@ def BasketView(request):
 
 def verify(request, ref):
     transaction = Transaction(authorization_key=settings.PAYSTACK_SECRET_KEY)
-    response = transaction.verify(id)
+    response = transaction.verify(ref)
     data = JsonResponse(response, safe=False)
     payment_confirmation(ref)
     return data
