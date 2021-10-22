@@ -11,9 +11,9 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['title', 'vendor', 'slug', 'price',
-                    'in_stock', 'created', 'updated']
+                    'in_stock', 'in_season','created', 'updated']
     list_filter = ['in_stock', 'is_active']
-    list_editable = ['price', 'in_stock']
+    list_editable = ['price', 'in_stock', 'in_season']
     readonly_fields = ('id','slug')
 
 
