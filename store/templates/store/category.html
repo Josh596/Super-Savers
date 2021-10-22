@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'store:index' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{category.name}}</li>
+        </ol>
+    </nav>
+
+    {% include 'store/product_list_template.html' %}
+
+</div>
+{% endblock %}
