@@ -1,15 +1,24 @@
 from datetime import datetime
-from random import randint
+from random import choice, randint
+from decimal import Decimal
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify 
 from django.db.models.signals import pre_save
+from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.dispatch import receiver
+from django.core.validators import MinValueValidator
 from account.models import UserBase
 from vendor.models import Vendor
 
+
+seasonal_choices = (
+    ('In Season', 'In Season'),
+    ('Off Season', 'Off Season'),
+    ('', 'Not Seasonal'),
+)
 
 
 class ProductManager(models.Manager):
@@ -25,6 +34,7 @@ class PallyManager(models.Manager):
 class Category(models.Model):
     name = models.CharField(max_length=255, db_index=True)
     slug = models.SlugField(max_length=255, unique=True)
+    image = models.ImageField(upload_to='categories/', default='categories/basket.jfif')
 
     class Meta:
         verbose_name_plural = 'categories'
@@ -54,6 +64,12 @@ class Price(models.Model):
         pass
 
 class Product(models.Model):
+
+    class ProductSeasonalStaus(models.TextChoices):
+        IN_SEASON = 'In Season', _('In Season')
+        OFF_SEASON = 'Off Season', _('Off Season')
+        NOT_SEASONSAL = 'Not Seasonal', _('')
+        
     categories = models.ManyToManyField(Category, related_name='%(app_label)s_%(class)s_related', blank=True)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='%(app_label)s_%(class)s_related')
     title = models.CharField(max_length=255)
@@ -61,11 +77,12 @@ class Product(models.Model):
     image = models.ImageField(upload_to='images/', default='images/default.png')
     slug = models.SlugField(max_length=50, null=True, blank=True)
     price = models.OneToOneField(Price, on_delete=models.CASCADE, related_name='related_product')
-    discount = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='Product Discount in %', default=0)
+    discount = models.DecimalField(max_digits=5, decimal_places=2, verbose_name='Product Discount in %', default=0, validators=[MinValueValidator(Decimal('0.01'))])
     in_stock = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    in_season = models.CharField(max_length=30,choices=ProductSeasonalStaus.choices, default = ProductSeasonalStaus.IN_SEASON)
     products = ProductManager()
     objects = models.Manager()
 

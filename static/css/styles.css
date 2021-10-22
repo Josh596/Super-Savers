@@ -101,3 +101,27 @@ body {
     -webkit-box-shadow: 2px -1px 5px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 2px -1px 5px 0px rgba(0,0,0,0.75);
 }
+
+.item-card{
+    width: 25%;
+}
+
+.item-img{
+    height: 300px;
+}
+
+#search-form{
+	width: 50%;
+}
+
+
+
+@media (max-width: 979px) {
+    #search-form{
+        width: 100%;
+    }
+
+    .item-card{
+        width: 100%;
+    }
+}
