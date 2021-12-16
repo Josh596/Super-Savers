@@ -10,7 +10,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.db.utils import IntegrityError
 from account.tokens import account_activation_token
-from orders.models import OrderItem
+from orders.models import OrderItem, PallyOrderItem
 from store.models import Price, Product, Pally
 from vendor.forms import AddProductForm, PriceCreationForm, VendorRegistrationForm
 from vendor.models import Vendor
@@ -94,6 +94,7 @@ def orders_all(request):
     vendor = request.user.vendor
     product = vendor.store_product_related.all()
     orders = OrderItem.objects.filter(product__in = product, order__billing_status=True).order_by('-status')
+    pally_orders = PallyOrderItem.objects.filter(product__in = product, order__billing_status=True).order_by('-status')
     status =  {
                 1: 'Not Yet Shipped',
                 2: 'Shipped',
@@ -101,7 +102,7 @@ def orders_all(request):
                 4: 'Refunded',
             }   
     #In templates, render fulfilled orders and non-fulfilled orders
-    return render(request, 'vendor/orders-all.html', {'orders': orders, 'status':status})
+    return render(request, 'vendor/orders-all.html', {'orders': orders, 'status':status, 'pally_orders':pally_orders})
     
 
 @login_required

@@ -7,6 +7,12 @@ from django.db import models
 
 from store.models import Pally, Product
 
+ORDER_STATUS_CHOICES= (
+    ('Not Yet Shipped', 'Not Yet Shipped'),
+    ('Shipped', 'Shipped'),
+    ('Cancelled', 'Cancelled'),
+    ('Refunded', 'Refunded'),
+)
 
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='order_user')
@@ -38,7 +44,9 @@ class OrderItem(models.Model):
                                 on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
-
+    status= models.CharField(max_length=100,default='Not Yet Shipped', choices= ORDER_STATUS_CHOICES)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     def __str__(self):
         return str(self.id)
 
@@ -52,3 +60,6 @@ class PallyOrderItem(models.Model):
     product = models.ForeignKey(Pally,
                             related_name='order_pally_items',
                             on_delete=models.CASCADE )
+    status= models.CharField(max_length=100, default='Not Yet Shipped', choices= ORDER_STATUS_CHOICES)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
