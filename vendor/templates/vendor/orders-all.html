@@ -1,0 +1,43 @@
+{% extends 'vendor/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Page Heading -->
+
+
+<!-- DataTales Example -->
+<div class="card shadow ml-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Total Paid</th>
+                        <th>Order Fulfilled</th>
+                        <th>Created On</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td><img width="100" src="{{order.product.image.url}}"></td>
+                        <td>{{order.price}}</td>
+                        <td>{{status|get_item:order.status}}</td>
+                        <td>{{order.created}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+{% endblock %}

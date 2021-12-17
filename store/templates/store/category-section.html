@@ -1,0 +1,12 @@
+<div class="scrollable-div" style="overflow: auto; white-space: nowrap;">
+<div class="d-inline-flex" >
+    {% for category in categories %}
+    <div class="card">
+        <div class="card-body">
+            <button class="btn btn-primary rounded-pill w-100">{{category.name}}</button>
+        </div>
+        <a href="{{category.get_absolute_url}}"><img src="{{category.image.url}}" class="card-img-bottom" alt="{{category.title}}"></a>
+    </div>
+    {% endfor %}
+</div>
+</div>

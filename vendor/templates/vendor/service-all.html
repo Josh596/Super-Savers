@@ -1,0 +1,58 @@
+{% extends 'vendor/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Page Heading -->
+
+
+<!-- DataTales Example -->
+<div class="card shadow ml-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Title</th>
+                        <th>Price</th>
+                        <th>Active</th>
+                        <th>Created On</th>
+                        <th>Last Updated</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for service in services %}
+                    <tr>
+                        <td><a href="{% url 'vendor:edit_service' service_id=service.id %}"><img width="100" src="{{service.image.url}}"></a></td>
+                        <td>{{service.title|slice:30}}</td>
+                        <td>&#8358;{{service.min_price}} - &#8358;{{service.max_price}}</td>
+                        <td>{{service.is_active}}</td>
+                        <td>{{service.created}}</td>
+                        <td>{{service.updated}}</td>
+                        <td><a class="btn" href="{% url 'vendor:edit_service' service_id=service.id %}"><i class="bi bi-pencil-square"></i></a></td>
+                        <td><a class="btn" href="{% url 'vendor:delete_service' service_id=service.id %}"><i class="bi bi-trash-fill"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>                
+            </table>
+
+            <div class="d-flex justify-content-end">
+                <a class="btn btn-primary" href="{% url 'vendor:add_service' %}">
+                    Create New Service
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+{% endblock %}

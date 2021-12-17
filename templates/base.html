@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0">
+    <title>Super Savers</title>
+    <!-- Load Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+    {% block css %}
+
+    {% endblock %}
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Nav bar at the top -->
+    <nav class="navbar navbar-expand-sm fixed-top navbar-light bg-primary py-2">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'store:index'%}">SUPER SAVERS</a>
+            <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse p-3 justify-content-end" id="navbarSupportedContent">
+                <form class="d-flex me-auto" id="search-form" method="get" action="{% url 'store:search' %}">
+                    <input class="form-control me-2" type="search" placeholder="Search Products and Pallies" aria-label="Search" name="q">
+                    <button class="btn btn-outline-success bg-light" type="submit" >Search</button>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if user.vendor %}
+                    <li class="nav-item py-0">
+                        <!-- For total item in basket -->
+                        <a class="nav-link vendor-btn bg-light" aria-current="page" href="{% url 'vendor:dashboard' %}">Supplier Dashboard</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item py-0">
+                        <!-- For total item in basket -->
+                        <a class="nav-link vendor-btn bg-light" # aria-current="page" href="{% url 'vendor:register' %}">Become a Vendor/Supplier</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item p-2">
+                        <!-- For total item in basket, add pally and product -->
+                        <a class="nav-link active py-0" aria-current="page" href="{% url 'basket:basket_summary' %}"><i class="fa fa-shopping-cart" style="font-size:24px"><sup id="basket-qty">{{basket_total}}</sup></i>Cart</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown py-0">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Account
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'account:dashboard' %}">Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{% url 'account:edit_details' %}">Edit Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'account:logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item p-2">
+                        <a class="nav-link" href="{% url 'account:login' %}">Login</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End of Nav Bar -->
+
+    <!-- Content -->
+    <div class="wrapper flex-grow-1">
+    {% block content %}
+    {% endblock %}
+    </div>
+    <!-- End of Content -->
+
+    <!-- Footer -->
+    {% include 'base_footer.html' %}
+    <!-- End of Footer -->
+
+
+
+
+
+
+    <!-- All modals -->
+    
+    <!-- Modal -->
+    <div class="modal fade " id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Buttons for Pay by myself and Pally -->
+                    <form>
+                        <ul class="nav nav-pills ms-3 mb-3 " id="pills-tab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <input id="pills-myself-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-paymyself" type="radio" role="tab" aria-controls="pills-home"
+                                    aria-selected="true" value="Pay by Myself" name="order-type" checked>
+                                <label for="pills-myself-tab">Pay by myself</label>
+                            </li>
+                            <li class="nav-item ms-3" role="presentation">
+                                <input  id="pills-pally-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pills-pally" type="radio" role="tab" aria-controls="pills-profile"
+                                    aria-selected="false" value="Pally(Split bill)" name="order-type">
+                                <label for="pills-pally-tab">Pally(Split bill)</label>
+                            </li>
+                        </ul>
+                    </form>
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-paymyself" role="tabpanel">
+                            <form id="order-product-form" method="POST">
+                                {% csrf_token %}
+                                <div class="pally-box form-group m-4" style="display: block;">
+                                    <label style=" font-size: 14px;color: #4F4F4F; display: block;">Quantity</label>
+                                    <input type="hidden" id="active-product-id">
+                                    <div class="d-flex" style="width: 30%;">
+                                        <input type="number" value="1" id="order-quantity" name="order-quantity"  min="1">
+                                    </div>
+                                </div>
+                                <button hidden type="reset" id="reset-product-qty"></button>
+                            </form>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-pally" role="tabpanel">
+                            <form method="POST" id="order-pally-form">
+                                {% csrf_token %}
+                                <div class="pally-box form-group m-4">
+                                    <label style=" font-size: 14px;color: #4F4F4F;">Maximum of 20 people to pally with</label>
+                                    <input type="hidden" id="active-pally-id">
+                                    <input type="number" class="form-control"
+                                        style=" width: 20%;border-radius: 5px;border: 2px solid #AAAAAA;height: 44px;color: #333333;"
+                                        value="20" min="2" name="number_of_person" id="number_of_person">
+                                    <span class="pally_max_size" style="color:#f00;"></span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display: block;">
+                    <button type="button" class="btn btn-secondary" id="closeOrderModal" style="display: block; width: 100%;" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="addtocart-button" style="display: block; width: 100%;">Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <!-- Modal HTML -->
+    <div id="orderSuccessModal" class="modal fade">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <div class="icon-box">
+                        <i class="material-icons">&#xE876;</i>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body text-center">
+                    <h4>Great!</h4>	
+                    <p>Item(s) has been added to your cart.</p>
+                </div>
+            </div>
+            <div class="modal-footer" style="display: block;">
+                <button type="button" class="btn btn-secondary" id="closeSuccessModal" style="display: block; width: 100%;" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals end -->
+    <script src="{% static 'js/bootstrap-input-spinner.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    <script>
+        window.onload = ()=>{
+            $("input[type='number']").inputSpinner();
+        }
+        function orderSuccess(){
+            $('#closeOrderModal').click()
+            $('#orderSuccessModal').modal('show');
+        }
+    </script>
+    {% block script %}
+    {% endblock %}
+</body>
+</html>

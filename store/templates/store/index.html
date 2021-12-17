@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+
+{% block content %}
+<div class="container">
+    <!-- Top Carousel -->
+    <div>
+        <!--Should have box-shadow and rounded corners-->
+        <div id="carouselIndicators" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to="2"
+                    aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner"
+                style="max-height: 300px; border-radius: 20px; box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.75);">
+                <div class="carousel-item active">
+                    <img src="{% static 'store/images/slider1.jpg' %}" class="d-block w-100 img-fluid" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="{% static 'store/images/slider2.jpg' %}" class="d-block w-100 img-fluid" alt="...">
+                </div>
+                <div class="carousel-item">
+                    <img src="{% static 'store/images/slider3.jpg' %}" class="d-block w-100 img-fluid" alt="...">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselIndicators"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselIndicators"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+    <!-- Carousel Ends -->
+
+    {% include 'store/category-section.html' %}
+    <!-- Store Content -->
+
+    <div class="m-3 mt-5">
+        <!-- Tab Controls -->
+        <div class="nav flex-row nav-pills w-100 justify-content-between"
+            style="border-bottom: 1px solid rgba(0,0,0,.15);" id="v-pills-tab" role="tablist"
+            aria-orientation="horizontal">
+            <div class="nav flex-row">
+                <button class="nav-link active" id="v-pills-product-tab" data-bs-toggle="pill"
+                    data-bs-target="#v-pills-product" type="button" role="tab" aria-controls="v-pills-product"
+                    aria-selected="true">Shop</button>
+                <button class="nav-link" id="v-pills-pally-tab" data-bs-toggle="pill" data-bs-target="#v-pills-pally"
+                    type="button" role="tab" aria-controls="v-pills-pally" aria-selected="false">Pally</button>
+            </div>
+            <!-- Product Filters-->
+            <!-- <ul class="nav nav-tabs justify-content-end">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                        aria-expanded="false">Categories</a>
+                    <ul class="dropdown-menu">
+                        {% for category in categories %}
+                        <li><a class="dropdown-item" href="{{ category.get_absolute_url }}">{{category.name}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                        aria-expanded="false">Sort By</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Default</a></li>
+                        <li><a class="dropdown-item" href="#">Price (Low to High)</a></li>
+                        <li><a class="dropdown-item" href="#">Price (High to Low)</a></li>
+                    </ul>
+                </li>
+            </ul> -->
+        </div>
+        <!-- Product Filters-->
+
+        <!-- Tab Contents -->
+        <div class="tab-content mt-3" id="v-pills-tabContent">
+
+            <!-- Product Contents -->
+
+            <div class="tab-pane fade show active" id="v-pills-product" role="tabpanel"
+                aria-labelledby="v-pills-product-tab">
+                {% include 'store/product_list_template.html' %}
+            </div>
+
+            <!-- Product Content Ends -->
+
+
+
+            <div class="tab-pane fade" id="v-pills-pally" role="tabpanel" aria-labelledby="v-pills-pally-tab">
+                {% include 'store/pally_list_template.html' %}
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!-- Store Content Ends -->
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    window.onload = () => {
+        var active_product_id  //Either pally form or single pay form
+        var pay_single = true;
+        $("input[type='number']").inputSpinner();
+        var orderModal = document.getElementById('orderModal');
+        orderModal.addEventListener('show.bs.modal', function (event) {
+            // Button that triggered the modal
+            var button = event.relatedTarget
+            // Extract info from data-bs-* attributes
+            active_product_id = button.getAttribute('data-product')
+            document.getElementById('order-quantity').value = 1
+            // If necessary, you could initiate an AJAX request here
+            // and then do the updating in a callback.
+            //
+            // Update the modal's content.
+
+        })
+    
+        function orderSuccess(){
+            $('#closeOrderModal').click()
+            $('#orderSuccessModal').modal('show');
+        }
+
+        $(document).on('click', '#addtocart-button', function (e) {
+        e.preventDefault();
+
+            if(pay_single){
+                product_id = active_product_id
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "basket:basket_add" %}',
+                    data: {
+                        productid: active_product_id,
+                        productqty: $('#order-quantity').val(),
+                        csrfmiddlewaretoken: "{{csrf_token}}",
+                        action: 'post'
+                    },
+                    success: function (json) {
+                        orderSuccess()
+                        document.getElementById("basket-qty").innerHTML = json.qty
+                    },
+                    error: function (xhr, errmsg, err) {}
+                });
+            }
+
+            else{
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "basket:basket_create_pally" %}',
+                    data: {
+                        productid: active_product_id,
+                        productqty: 1,
+                        no_of_person: $('#number_of_person').val(),
+                        csrfmiddlewaretoken: "{{csrf_token}}",
+                        action: 'post'
+                    },
+                    success: function (json) {
+                        orderSuccess()
+                        document.getElementById("basket-qty").innerHTML = json.qty
+                    },
+                    error: function (xhr, errmsg, err) {}
+                });
+            }
+        })
+
+        pallyorderbtns = document.getElementsByClassName("pally-order-btn")
+        for (let i = 0; i < pallyorderbtns.length; i++) {
+            pallyorderbtns[i].addEventListener("click", function(e){
+            btn = e.target;
+            productid = btn.getAttribute('data-pally')
+            $.ajax({
+                type: 'POST',
+                url: '{% url "basket:basket_add_pally" %}',
+                data: {
+                    productid: productid,
+                    productqty: 1,
+                    csrfmiddlewaretoken: "{{csrf_token}}",
+                    action: 'post'
+                },
+                success: function (json) {
+                    orderSuccess()
+                    document.getElementById("basket-qty").innerHTML = json.qty
+                },
+                error: function (xhr, errmsg, err) {
+                    alert(xhr.responseJSON.message)
+                }
+            });
+            })
+            
+        }
+
+
+    
+
+
+        var productTab = document.getElementById('pills-myself-tab')
+        productTab.addEventListener('shown.bs.tab', function (event) {
+            active_order_form = document.getElementById('order-product-form');
+            pay_single = true
+            // event.target // newly activated tab
+            // event.relatedTarget // previous active tab
+        })
+
+        var pallyTab = document.getElementById('pills-pally-tab')
+        pallyTab.addEventListener('shown.bs.tab', function (event) {
+            active_order_form = document.getElementById('order-pally-form')
+            pay_single = false
+            console.log(active_order_form)
+            // event.target // newly activated tab
+            // event.relatedTarget // previous active tab
+        })
+    }
+</script>
+{% endblock %}

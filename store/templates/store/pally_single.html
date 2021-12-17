@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    .order-type-btn-popup{
+        background: #FAB814;
+        color: #000;
+        font-size: 14px;
+        padding: 14px 12px;
+        border-radius: 5px;
+        font-weight: 700;
+        border: none;
+    }
+
+    .product-image{
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .price{
+        color: #666666;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 18px;
+    }
+
+    .product-description{
+        font-family: 'Lato', sans-serif;
+        color: #777777;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 400;
+    }
+
+    .product-categories{
+        font-family: 'Lato', sans-serif;
+        color: #777777;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 400;
+    }
+    a.categories{
+        color:#323a45;
+        font-size: 13px;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="product-details row mt-5">
+            <!-- Product Image.. -->
+            <div class="col">
+                <div class="simple-gallery">
+                    <img class="product-image" src="{{pally.product.image.url}}">
+                </div>
+            </div>
+            <!-- Product Details(Price, Title, Socials) -->
+            <div class="col">
+                <div class="prodetails-content">
+                    <small>Item #{{pally.product.id}}</small>
+                    <div class="row">
+                        <div class="col-lg-10">
+                            <h4 class="heading">{{pally.product.title}}</h4>
+                            <p class="product-description">
+                                {{pally.product.description|slice:":300"}}...
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- <a href="#" class="grey-bg">
+                        32% OFF
+                        | <span class="clr-gr">In Season</span>
+                    </a> -->
+                    <h4 class="mb-3 mt-1 price">&#8358;{{pally.price_per_slot.price}} <small>per {{pally.price_per_slot.quantity}} {{pally.price_per_slot.unit.title}}</small></h4>
+                    <h5>{{pally.members.count}} out of {{pally.max_num_slot}}</h5>
+                    <hr class="d-none d-lg-block">
+                    <span class="product-categories">
+                        Categories:
+                        {% for category in product.categories.all %}
+                        <a class="categories" href="{{ category.get_absolute_url }}">{{category.name}}</a>, 
+                        {% endfor %}
+                    </span>
+                    <div class="button-wrapper mt-4 mb-4 d-none d-lg-block">
+                        <a href="javascript:void(0)">
+                            <button type="button" class="text-uppercase pally-order-btn" data-pally="{{pally.id}}">BUY SLOT</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Product Details(Price, Title, Socials) End -->
+
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+<script>
+    pallyorderbtns = document.getElementsByClassName("pally-order-btn")
+    for (let i = 0; i < pallyorderbtns.length; i++) {
+        pallyorderbtns[i].addEventListener("click", function(e){
+            btn = e.target;
+            productid = btn.getAttribute('data-pally')
+            $.ajax({
+                type: 'POST',
+                url: '{% url "basket:basket_add_pally" %}',
+                data: {
+                    productid: productid,
+                    productqty: 1,
+                    csrfmiddlewaretoken: "{{csrf_token}}",
+                    action: 'post'
+                },
+                success: function (json) {
+                    orderSuccess()
+                    document.getElementById("basket-qty").innerHTML = json.qty
+                },
+                error: function (xhr, errmsg, err) {
+                    alert(xhr.responseJSON.message)
+                }
+            });
+        })
+        
+        }
+</script>
+{% endblock %}

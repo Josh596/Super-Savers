@@ -1,0 +1,128 @@
+{% extends "./sub_base.html" %}
+{% load static %}
+{% block title %}Make Payment{% endblock %}
+
+{% block sub_content %}
+<div class="row">
+  <div class="col">
+    <form id="payment-form">
+      <h3 class="mb-3">Billing address</h3>
+      <!-- Error messages in this element -->
+      <div id="card-errors" class="a" role="alert"></div>
+      <div class="row g-3">
+        <div class="col-sm-7">
+          <label for="firstName" class="form-label">Customer Name</label>
+          <input type="text" class="form-control" id="custName" value="{{user.user_name}}" placeholder="" required>
+          <div class="invalid-feedback">
+            Valid first name is required.
+          </div>
+        </div>
+        <div class="col-12">
+          <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
+          <input type="email" class="form-control" value="{{user.email}}" id="email-address"
+            placeholder="you@example.com">
+          <div class="invalid-feedback">
+            Please enter a valid email address for shipping updates.
+          </div>
+        </div>
+        <div class="col-12">
+          <label for="address" class="form-label">Address</label>
+          <input type="text" class="form-control" id="address" value="{{ user.address_line_1 }}" placeholder="1234 Main St" required>
+          <div class="invalid-feedback">
+            Please enter your shipping address.
+          </div>
+        </div>
+        <div class="col-12">
+          <label for="address2" class="form-label">Address 2 <span class="text-muted">(Optional)</span></label>
+          <input type="text" class="form-control" id="address2" value="{{ user.address_line_2 }}" placeholder="Apartment or suite">
+        </div>
+
+      </div>
+
+      <hr class="my-4">
+      <button id="paymentForm" type="button" onclick="payWithPaystack(event)"
+        class="btn btn-primary w-100 fw-bold">Pay</button>
+    </form>
+  </div>
+  <div class="col">
+    <div class="bg-light rounded-pill px-4 py-3 text-uppercase font-weight-bold">Order summary </div>
+    <div class="p-4">
+      <ul class="list-unstyled mb-4">
+        <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Order Subtotal
+          </strong><strong>&#x20A6;{{subtotal_cost}}</strong></li>
+        <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Shipping and
+            handling</strong><strong>&#x20A6;{{0}}</strong></li>
+        <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Total</strong>
+          <h5 class="font-weight-bold">&#x20A6;{{total_cost}}</h5>
+        </li>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  var order_key = "{{ order_key }}"
+  function createOrder() {
+    $.ajax({
+      type: "POST",
+      url: "{% url 'orders:add' %}",
+      data: {
+        csrfmiddlewaretoken: "{{ csrf_token }}",
+        order_key: order_key,
+        address: document.getElementById('address').value,
+        address2: document.getElementById('address2').value,
+        action: "post",
+      },
+      success: function (json) {
+        console.log(json.success)
+      },
+      error: function (xhr, errmsg, err) { },
+    });
+  }
+  //Create Order has page loads
+
+
+
+  var paymentForm = document.getElementById('paymentForm');
+  paymentForm.addEventListener('submit', payWithPaystack, false);
+
+  function verifyTransaction(reference) {
+    $.ajax({
+      url: "/payment/verify/" + reference,
+      method: 'get',
+      success: function (response) {
+        alert('Your payment was successful.');
+
+        window.location = "{% url 'payment:order_placed' %}" + `?order_key=${order_key}`
+      }
+    });
+  }
+
+  function payWithPaystack(e) {
+    e.preventDefault();
+    createOrder();
+    var handler = PaystackPop.setup({
+      key: '{{PAYSTACK_PUBLIC_KEY}}', // Replace with your public key
+      email: document.getElementById('email-address').value,
+      amount: parseInt('{{total_cost}}') * 100, // the amount value is multiplied by 100 to convert to the lowest currency unit
+      currency: 'NGN', // Use GHS for Ghana Cedis or USD for US Dollars
+      ref: order_key,
+      callback: function (response) {
+        //this happens after the payment is completed successfully
+        var reference = response.reference;
+        verifyTransaction('{{order_key}}')
+        // Make an AJAX call to your server with the reference to verify the transaction
+      },
+      onClose: function () {
+        alert('Transaction was not completed, window closed.');
+      },
+    });
+    handler.openIframe();
+  }
+</script>
+
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script src="{% static 'payment/index.js' %}" data-rel-js></script>
+
+{% endblock %}

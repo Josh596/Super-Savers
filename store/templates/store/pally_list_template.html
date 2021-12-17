@@ -1,0 +1,16 @@
+<div class="d-flex flex-wrap" style="gap: 10px;">
+    {% for pally in pallies %}
+    <div class="card item-card">
+        <img src="{{pally.product.image.url}}" class="card-img-top item-img" alt="{{pally.product.title}}">
+        <div class="card-body px-2">
+            <h5 class="card-title"><a class="nav-link" href="{{ pally.get_absolute_url }}">{{pally.product.title}}({{pally.product.price.quantity}} {{pally.product.price.unit}})</a></h5>
+            </h5>
+            <p class="card-text">&#8358; {{pally.price_per_slot.price}} per slot({{pally.price_per_slot.quantity}} {{pally.product.price.unit}})</p>
+            <p class="card-text">{{pally.get_empty_slot}} slots left</p>
+            <button href="#" class="btn btn-primary pally-order-btn" data-pally="{{pally.id}}">BUY SLOT</button>
+        </div>
+    </div>
+    {% empty %}
+    <span> No pally available at this moment...</span>
+    {% endfor %}
+</div>
