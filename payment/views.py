@@ -23,14 +23,13 @@ def order_placed(request):
     pallybasket = PallyBasket(request)
     for item in pallybasket:
         pally = item['pally']
-        print(pally)
         if not pally.is_active:
             pally.is_active = True
         if not pally.author:
             pally.author = request.user
         pally.members.add(request.user)
         pally.available_slots -= item['qty']
-        pally.expiry_date = datetime.utcnow() + timedelta(days = 2)
+        pally.expiry_date = timezone.now() + timedelta(days=2)
         pally.save()
     basket.clear()
     pallybasket.clear()
@@ -70,23 +69,17 @@ def verify(request, ref):
 @csrf_exempt
 def paystack_webhook(request):
     secret = settings.PAYSTACK_SECRET_KEY
-    hash = hashlib.sha512(secret).update(json.dumps(request.body)).hexdigest()
+    computed_hash = hashlib.sha512(secret.encode() + request.body).hexdigest()
 
-    if (hash == request.headers['x-paystack-signature']): 
-        #Retrieve the request's body
-        event = request.body
-        #Do something with event  
-    
-
-    event = None
-
-    # Handle the event
-    
-    if event['event'] == 'charge.success':
-        print('Payment Succeeded')
-        payment_confirmation(event['data']['reference'])
-
-    else:
-        print('Unhandled event type {}'.format(event.type))
+    if computed_hash == request.headers.get('x-paystack-signature', ''): 
+        # Retrieve the request's body
+        event = json.loads(request.body)
+        
+        # Handle the event
+        if event.get('event') == 'charge.success':
+            payment_confirmation(event['data']['reference'])
+        else:
+            # Unhandled event type
+            pass
 
     return HttpResponse(status=200)

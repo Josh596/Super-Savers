@@ -1,0 +1,8 @@
+services:
+  web:
+    build: .
+    container_name: supersavers_web
+    ports:
+      - "5012:8000"
+    volumes:
+      - ./:/app

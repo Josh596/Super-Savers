@@ -40,7 +40,6 @@ def search_all(request):
     if query:
         lookups= Q(title__icontains=query) | Q(description__icontains=query)
         products = Product.products.filter(lookups)
-        print(products)
         pallies = Pally.pallies.filter(product__in = products)
     else:
         products = Product.products.all()
